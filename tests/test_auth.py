@@ -9,7 +9,13 @@ import pytest
 
 from gpt_codex_client import AuthError, PendingLogin, finish_login, get_token, refresh, start_login
 from gpt_codex_client._auth import make_pkce_challenge, make_pkce_verifier
-from gpt_codex_client._config import Token, load_token, save_token
+from gpt_codex_client._config import (
+    DEFAULT_CLIENT_ID,
+    DEFAULT_REDIRECT_URI,
+    Token,
+    load_token,
+    save_token,
+)
 
 
 def test_pkce_verifier_and_challenge_shape() -> None:
@@ -44,12 +50,14 @@ def test_finish_login_exchanges_code_and_saves_token(tmp_path: Path) -> None:
         state="state",
         verifier="verifier",
         redirect_uri="http://127.0.0.1/callback",
+        client_id="custom-client",
     )
 
     def handler(request: httpx.Request) -> httpx.Response:
         assert request.url.path == "/oauth/token"
         body = urllib.parse.parse_qs(request.content.decode("utf-8"))
         assert body["grant_type"] == ["authorization_code"]
+        assert body["client_id"] == ["custom-client"]
         assert body["code"] == ["abc"]
         assert body["code_verifier"] == ["verifier"]
         return httpx.Response(200, json={"access_token": "access", "refresh_token": "refresh"})
@@ -76,6 +84,7 @@ def test_refresh_uses_cached_refresh_token(tmp_path: Path) -> None:
     def handler(request: httpx.Request) -> httpx.Response:
         body = urllib.parse.parse_qs(request.content.decode("utf-8"))
         assert body["grant_type"] == ["refresh_token"]
+        assert body["client_id"] == [DEFAULT_CLIENT_ID]
         assert body["refresh_token"] == ["refresh"]
         return httpx.Response(200, json={"access_token": "new", "expires_in": 3600})
 
@@ -125,9 +134,22 @@ def test_expired_token_refresh_fallback_to_login(tmp_path: Path) -> None:
 
 
 def test_start_login_url_contains_state_and_challenge() -> None:
-    pending = start_login(redirect_uri="http://127.0.0.1:1234/callback")
+    pending = start_login()
     values = urllib.parse.parse_qs(urllib.parse.urlparse(pending.url).query)
 
     assert values["state"] == [pending.state]
+    assert values["client_id"] == [DEFAULT_CLIENT_ID]
     assert values["code_challenge_method"] == ["S256"]
-    assert values["redirect_uri"] == [pending.redirect_uri]
+    assert values["redirect_uri"] == [DEFAULT_REDIRECT_URI]
+    assert values["id_token_add_organizations"] == ["true"]
+
+
+def test_start_login_accepts_custom_client_id() -> None:
+    pending = start_login(
+        redirect_uri="http://127.0.0.1:1234/callback",
+        client_id="custom-client",
+    )
+    values = urllib.parse.parse_qs(urllib.parse.urlparse(pending.url).query)
+
+    assert pending.client_id == "custom-client"
+    assert values["client_id"] == ["custom-client"]

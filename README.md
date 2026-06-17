@@ -13,12 +13,13 @@ uv add gpt-codex-client
 ```python
 from gpt_codex_client import CodexClient
 
-client = CodexClient()
-response = client.responses.create(
-    model="choose-a-visible-model-with-client.models.list",
-    input="Write a short Python function that reverses a string.",
-)
-print(response.output_text)
+with CodexClient(no_browser=True) as client:
+    model = client.models.list()[0].id
+    response = client.responses.create(
+        model=model,
+        input="Write a short Python function that reverses a string.",
+    )
+    print(response.output_text)
 ```
 
 ## Authentication
@@ -31,6 +32,10 @@ from gpt_codex_client import login
 
 login(no_browser=True)
 ```
+
+The default OAuth client id follows the ChatGPT/Codex sign-in flow used by the
+official Codex clients. If OpenAI issues a different client id for your app, set
+`GPT_CODEX_CLIENT_OAUTH_CLIENT_ID` or pass `auth_client_id=` to `CodexClient`.
 
 For automation, pass a `login_handler` that receives the authorization URL and
 returns the final redirect URL:
@@ -105,4 +110,3 @@ print(completion.choices[0].message.content)
 uv sync --all-extras --dev
 uv run pytest -q
 ```
-
