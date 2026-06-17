@@ -14,7 +14,13 @@ from ._async_responses import AsyncResponsesResource
 from ._async_stream import AsyncResponseStream
 from ._auth import LoginHandler
 from ._chat import AsyncChatResource
-from ._config import DEFAULT_BASE_URL, DEFAULT_TOKEN_PATH, Token, build_headers
+from ._config import (
+    DEFAULT_BASE_URL,
+    DEFAULT_TOKEN_PATH,
+    Token,
+    build_headers,
+    get_client_version,
+)
 from ._errors import (
     APIConnectionError,
     APIError,
@@ -34,6 +40,8 @@ class AsyncCodexClient:
         no_browser: bool = False,
         token_path: str | Path = DEFAULT_TOKEN_PATH,
         login_handler: LoginHandler | None = None,
+        auth_client_id: str | None = None,
+        client_version: str | None = None,
         timeout: float = 120.0,
         max_retries: int = 2,
         default_headers: dict[str, str] | None = None,
@@ -44,6 +52,8 @@ class AsyncCodexClient:
         self.no_browser = no_browser
         self.token_path = token_path
         self.login_handler = login_handler
+        self.auth_client_id = auth_client_id
+        self.client_version = get_client_version(client_version)
         self.timeout = timeout
         self.max_retries = max_retries
         self.default_headers = default_headers or {}
@@ -88,6 +98,7 @@ class AsyncCodexClient:
                     method,
                     url,
                     json=json,
+                    params=self._params(),
                     headers=await self._headers(extra_headers),
                     timeout=timeout or self.timeout,
                 )
@@ -126,10 +137,14 @@ class AsyncCodexClient:
             method,
             url,
             json=json,
+            params=self._params(),
             headers=await self._headers(extra_headers),
             timeout=timeout or self.timeout,
         )
         return AsyncResponseStream(manager)
+
+    def _params(self) -> dict[str, str]:
+        return {"client_version": self.client_version}
 
     async def _headers(self, extra_headers: dict[str, str] | None = None) -> dict[str, str]:
         token = self._token
@@ -139,6 +154,7 @@ class AsyncCodexClient:
                 headless=self.headless,
                 no_browser=self.no_browser,
                 login_handler=self.login_handler,
+                client_id=self.auth_client_id,
                 http_client=self._http_client,
                 timeout=self.timeout,
             )

@@ -13,7 +13,7 @@ from ._auth import (
     _token_from_response,
     start_login,
 )
-from ._config import CLIENT_ID, DEFAULT_TOKEN_PATH, TOKEN_URL, Token, load_token, save_token
+from ._config import DEFAULT_TOKEN_PATH, TOKEN_URL, Token, get_client_id, load_token, save_token
 from ._errors import AuthError
 
 
@@ -33,7 +33,7 @@ async def afinish_login(
             TOKEN_URL,
             data={
                 "grant_type": "authorization_code",
-                "client_id": CLIENT_ID,
+                "client_id": pending.client_id or get_client_id(),
                 "code": code,
                 "redirect_uri": pending.redirect_uri,
                 "code_verifier": pending.verifier,
@@ -54,11 +54,12 @@ async def alogin(
     no_browser: bool = False,
     token_path: str | Path = DEFAULT_TOKEN_PATH,
     login_handler: LoginHandler | None = None,
+    client_id: str | None = None,
     http_client: httpx.AsyncClient | None = None,
     timeout: float | httpx.Timeout | None = 120.0,
 ) -> Token:
     if login_handler is not None:
-        pending = start_login()
+        pending = start_login(client_id=client_id)
         callback_url = login_handler(pending.url)
         return await afinish_login(
             callback_url,
@@ -76,6 +77,7 @@ async def alogin(
             no_browser=no_browser,
             token_path=token_path,
             login_handler=None,
+            client_id=client_id,
             timeout=timeout,
         )
 
@@ -86,6 +88,7 @@ async def arefresh(
     *,
     token_path: str | Path = DEFAULT_TOKEN_PATH,
     refresh_token: str | None = None,
+    client_id: str | None = None,
     http_client: httpx.AsyncClient | None = None,
     timeout: float | httpx.Timeout | None = 120.0,
 ) -> Token:
@@ -101,7 +104,7 @@ async def arefresh(
             TOKEN_URL,
             data={
                 "grant_type": "refresh_token",
-                "client_id": CLIENT_ID,
+                "client_id": get_client_id(client_id),
                 "refresh_token": resolved_refresh_token,
             },
             timeout=timeout,
@@ -122,6 +125,7 @@ async def aget_token(
     headless: bool = False,
     no_browser: bool = False,
     login_handler: LoginHandler | None = None,
+    client_id: str | None = None,
     http_client: httpx.AsyncClient | None = None,
     timeout: float | httpx.Timeout | None = 120.0,
 ) -> Token:
@@ -134,6 +138,7 @@ async def aget_token(
             return await arefresh(
                 token_path=token_path,
                 refresh_token=cached.refresh_token,
+                client_id=client_id,
                 http_client=http_client,
                 timeout=timeout,
             )
@@ -145,6 +150,7 @@ async def aget_token(
         no_browser=no_browser,
         token_path=token_path,
         login_handler=login_handler,
+        client_id=client_id,
         http_client=http_client,
         timeout=timeout,
     )

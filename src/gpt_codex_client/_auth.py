@@ -16,11 +16,12 @@ import httpx
 
 from ._config import (
     AUTHORIZE_URL,
-    CLIENT_ID,
+    DEFAULT_REDIRECT_URI,
     DEFAULT_SCOPES,
     DEFAULT_TOKEN_PATH,
     TOKEN_URL,
     Token,
+    get_client_id,
     load_token,
     save_token,
 )
@@ -35,6 +36,7 @@ class PendingLogin:
     state: str
     verifier: str
     redirect_uri: str
+    client_id: str = ""
 
 
 def make_pkce_verifier() -> str:
@@ -50,22 +52,31 @@ def start_login(
     *,
     scopes: tuple[str, ...] = DEFAULT_SCOPES,
     redirect_uri: str | None = None,
+    client_id: str | None = None,
 ) -> PendingLogin:
     state = secrets.token_urlsafe(32)
     verifier = make_pkce_verifier()
     challenge = make_pkce_challenge(verifier)
-    resolved_redirect_uri = redirect_uri or _loopback_redirect_uri()
+    resolved_redirect_uri = redirect_uri or DEFAULT_REDIRECT_URI
+    resolved_client_id = get_client_id(client_id)
     query = {
         "response_type": "code",
-        "client_id": CLIENT_ID,
+        "client_id": resolved_client_id,
         "redirect_uri": resolved_redirect_uri,
         "scope": " ".join(scopes),
         "state": state,
         "code_challenge": challenge,
         "code_challenge_method": "S256",
+        "id_token_add_organizations": "true",
     }
     url = f"{AUTHORIZE_URL}?{urllib.parse.urlencode(query)}"
-    return PendingLogin(url=url, state=state, verifier=verifier, redirect_uri=resolved_redirect_uri)
+    return PendingLogin(
+        url=url,
+        state=state,
+        verifier=verifier,
+        redirect_uri=resolved_redirect_uri,
+        client_id=resolved_client_id,
+    )
 
 
 def finish_login(
@@ -84,7 +95,7 @@ def finish_login(
             TOKEN_URL,
             data={
                 "grant_type": "authorization_code",
-                "client_id": CLIENT_ID,
+                "client_id": pending.client_id or get_client_id(),
                 "code": code,
                 "redirect_uri": pending.redirect_uri,
                 "code_verifier": pending.verifier,
@@ -105,10 +116,11 @@ def login(
     no_browser: bool = False,
     token_path: str | Path = DEFAULT_TOKEN_PATH,
     login_handler: LoginHandler | None = None,
+    client_id: str | None = None,
     http_client: httpx.Client | None = None,
     timeout: float | httpx.Timeout | None = 120.0,
 ) -> Token:
-    pending = start_login()
+    pending = start_login(client_id=client_id)
     if login_handler is not None:
         callback_url = login_handler(pending.url)
     elif headless:
@@ -133,6 +145,7 @@ def refresh(
     *,
     token_path: str | Path = DEFAULT_TOKEN_PATH,
     refresh_token: str | None = None,
+    client_id: str | None = None,
     http_client: httpx.Client | None = None,
     timeout: float | httpx.Timeout | None = 120.0,
 ) -> Token:
@@ -148,7 +161,7 @@ def refresh(
             TOKEN_URL,
             data={
                 "grant_type": "refresh_token",
-                "client_id": CLIENT_ID,
+                "client_id": get_client_id(client_id),
                 "refresh_token": resolved_refresh_token,
             },
             timeout=timeout,
@@ -169,6 +182,7 @@ def get_token(
     headless: bool = False,
     no_browser: bool = False,
     login_handler: LoginHandler | None = None,
+    client_id: str | None = None,
     http_client: httpx.Client | None = None,
     timeout: float | httpx.Timeout | None = 120.0,
 ) -> Token:
@@ -181,6 +195,7 @@ def get_token(
             return refresh(
                 token_path=token_path,
                 refresh_token=cached.refresh_token,
+                client_id=client_id,
                 http_client=http_client,
                 timeout=timeout,
             )
@@ -192,6 +207,7 @@ def get_token(
         no_browser=no_browser,
         token_path=token_path,
         login_handler=login_handler,
+        client_id=client_id,
         http_client=http_client,
         timeout=timeout,
     )
@@ -234,13 +250,6 @@ def _first(values: dict[str, list[str]], key: str) -> str | None:
     if not value:
         return None
     return value[0]
-
-
-def _loopback_redirect_uri() -> str:
-    server = HTTPServer(("127.0.0.1", 0), BaseHTTPRequestHandler)
-    port = server.server_port
-    server.server_close()
-    return f"http://127.0.0.1:{port}/callback"
 
 
 def _wait_for_callback(pending: PendingLogin) -> str:

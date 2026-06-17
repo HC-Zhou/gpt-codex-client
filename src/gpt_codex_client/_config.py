@@ -14,12 +14,16 @@ from ._errors import AuthError
 DEFAULT_BASE_URL = "https://chatgpt.com/backend-api/codex"
 AUTHORIZE_URL = "https://auth.openai.com/oauth/authorize"
 TOKEN_URL = "https://auth.openai.com/oauth/token"
-CLIENT_ID = "gpt-codex-client"
+DEFAULT_CLIENT_ID = "app_EMoamEEZ73f0CkXaXp7hrann"
+CLIENT_ID_ENV_VAR = "GPT_CODEX_CLIENT_OAUTH_CLIENT_ID"
 DEFAULT_SCOPES = ("openid", "profile", "email", "offline_access")
 DEFAULT_TOKEN_PATH = Path("~/.codex/auth.json")
+DEFAULT_CLIENT_VERSION = "0.1.0"
+CLIENT_VERSION_ENV_VAR = "GPT_CODEX_CLIENT_VERSION"
 USER_AGENT = "gpt-codex-client/0.1.0"
 ORIGINATOR = "gpt-codex-client"
 BETA_HEADER = "responses=v1"
+DEFAULT_REDIRECT_URI = "http://localhost:1455/auth/callback"
 
 
 @dataclass
@@ -84,6 +88,20 @@ def _expires_at(payload: dict[str, Any]) -> float | None:
 
 def expand_token_path(token_path: str | Path) -> Path:
     return Path(token_path).expanduser()
+
+
+def get_client_id(client_id: str | None = None) -> str:
+    resolved = client_id or os.environ.get(CLIENT_ID_ENV_VAR) or DEFAULT_CLIENT_ID
+    if not resolved.strip():
+        raise AuthError("OAuth client_id cannot be empty")
+    return resolved
+
+
+def get_client_version(client_version: str | None = None) -> str:
+    resolved = client_version or os.environ.get(CLIENT_VERSION_ENV_VAR) or DEFAULT_CLIENT_VERSION
+    if not resolved.strip():
+        raise AuthError("client_version cannot be empty")
+    return resolved
 
 
 def load_token(token_path: str | Path = DEFAULT_TOKEN_PATH) -> Token | None:
