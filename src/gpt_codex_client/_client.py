@@ -1,0 +1,164 @@
+from __future__ import annotations
+
+import time
+from pathlib import Path
+from types import TracebackType
+from typing import Any
+from urllib.parse import urljoin
+
+import httpx
+
+from ._auth import LoginHandler, get_token
+from ._chat import ChatResource
+from ._config import DEFAULT_BASE_URL, DEFAULT_TOKEN_PATH, Token, build_headers
+from ._errors import (
+    APIConnectionError,
+    APIError,
+    APITimeoutError,
+    CodexError,
+    error_from_response,
+    is_retryable_error,
+)
+from ._models import ModelsResource
+from ._responses import ResponsesResource
+from ._stream import ResponseStream
+from ._types import JsonObject
+
+
+class CodexClient:
+    def __init__(
+        self,
+        *,
+        headless: bool = False,
+        no_browser: bool = False,
+        token_path: str | Path = DEFAULT_TOKEN_PATH,
+        login_handler: LoginHandler | None = None,
+        timeout: float = 120.0,
+        max_retries: int = 2,
+        default_headers: dict[str, str] | None = None,
+        http_client: httpx.Client | None = None,
+        base_url: str = DEFAULT_BASE_URL,
+    ) -> None:
+        self.headless = headless
+        self.no_browser = no_browser
+        self.token_path = token_path
+        self.login_handler = login_handler
+        self.timeout = timeout
+        self.max_retries = max_retries
+        self.default_headers = default_headers or {}
+        self.base_url = base_url.rstrip("/") + "/"
+        self._http_client = http_client or httpx.Client(timeout=timeout)
+        self._owns_http_client = http_client is None
+        self._token: Token | None = None
+
+        self.responses = ResponsesResource(self)
+        self.chat = ChatResource(self)
+        self.models = ModelsResource(self)
+
+    def __enter__(self) -> CodexClient:
+        return self
+
+    def __exit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc: BaseException | None,
+        traceback: TracebackType | None,
+    ) -> None:
+        self.close()
+
+    def close(self) -> None:
+        if self._owns_http_client:
+            self._http_client.close()
+
+    def _request(
+        self,
+        method: str,
+        path: str,
+        *,
+        json: JsonObject | None = None,
+        timeout: float | None = None,
+        extra_headers: dict[str, str] | None = None,
+    ) -> JsonObject:
+        url = urljoin(self.base_url, path.lstrip("/"))
+        attempts = self.max_retries + 1
+        for attempt in range(attempts):
+            try:
+                response = self._http_client.request(
+                    method,
+                    url,
+                    json=json,
+                    headers=self._headers(extra_headers),
+                    timeout=timeout or self.timeout,
+                )
+            except httpx.TimeoutException as exc:
+                if attempt + 1 < attempts:
+                    self._sleep_before_retry(attempt, None)
+                    continue
+                raise APITimeoutError(str(exc)) from exc
+            except httpx.RequestError as exc:
+                if attempt + 1 < attempts:
+                    self._sleep_before_retry(attempt, None)
+                    continue
+                raise APIConnectionError(str(exc)) from exc
+
+            if response.status_code < 400:
+                return _json_object(response)
+            error = error_from_response(response)
+            if attempt + 1 < attempts and is_retryable_error(error):
+                retry_after = error.retry_after if isinstance(error, APIError) else None
+                self._sleep_before_retry(attempt, retry_after)
+                continue
+            raise error
+        raise APIConnectionError("Request retry loop exited unexpectedly")
+
+    def _stream(
+        self,
+        method: str,
+        path: str,
+        *,
+        json: JsonObject | None = None,
+        timeout: float | None = None,
+        extra_headers: dict[str, str] | None = None,
+    ) -> ResponseStream:
+        url = urljoin(self.base_url, path.lstrip("/"))
+        manager = self._http_client.stream(
+            method,
+            url,
+            json=json,
+            headers=self._headers(extra_headers),
+            timeout=timeout or self.timeout,
+        )
+        return ResponseStream(manager)
+
+    def _headers(self, extra_headers: dict[str, str] | None = None) -> dict[str, str]:
+        token = self._token
+        if token is None or token.is_expired():
+            token = get_token(
+                token_path=self.token_path,
+                headless=self.headless,
+                no_browser=self.no_browser,
+                login_handler=self.login_handler,
+                http_client=self._http_client,
+                timeout=self.timeout,
+            )
+            self._token = token
+        headers = build_headers(token, default_headers=self.default_headers)
+        if extra_headers:
+            headers.update(extra_headers)
+        return headers
+
+    def _sleep_before_retry(self, attempt: int, retry_after: float | None) -> None:
+        delay = retry_after if retry_after is not None else min(2.0, 0.25 * (2**attempt))
+        time.sleep(delay)
+
+
+def _json_object(response: httpx.Response) -> JsonObject:
+    if not response.content:
+        return {}
+    try:
+        payload: Any = response.json()
+    except ValueError as exc:
+        raise CodexError("Response was not valid JSON") from exc
+    if not isinstance(payload, dict):
+        raise CodexError("Response JSON was not an object")
+    return payload

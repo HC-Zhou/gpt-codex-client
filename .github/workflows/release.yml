@@ -1,0 +1,38 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+  id-token: write
+  pages: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: uv sync --all-extras --dev
+      - run: uv run ruff format --check
+      - run: uv run ruff check src tests
+      - run: uv run mypy src/gpt_codex_client tests --strict
+      - run: uv run pytest -q
+      - name: Check tag matches package version
+        run: |
+          VERSION=$(uv run python -c "import gpt_codex_client; print(gpt_codex_client.__version__)")
+          test "v${VERSION}" = "${GITHUB_REF_NAME}"
+      - run: uv build
+      - uses: pypa/gh-action-pypi-publish@release/v1
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+          generate_release_notes: true
+      - run: uv run mkdocs gh-deploy --force
+

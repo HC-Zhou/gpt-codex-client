@@ -1,0 +1,26 @@
+site_name: gpt-codex-client
+site_description: OpenAI SDK-style client for ChatGPT/Codex OAuth-backed Responses workflows.
+repo_url: https://github.com/example/gpt-codex-client
+theme:
+  name: material
+  features:
+    - navigation.sections
+    - content.code.copy
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [src]
+nav:
+  - Getting Started: index.md
+  - Authentication: authentication.md
+  - Responses: responses.md
+  - Chat Compatibility: chat-compatibility.md
+  - Streaming: streaming.md
+  - Structured Output: structured-output.md
+  - Tool Calls: tool-calls.md
+  - Models: models.md
+  - Errors: errors.md
+  - Release: release.md
+
