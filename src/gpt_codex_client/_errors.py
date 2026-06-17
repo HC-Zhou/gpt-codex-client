@@ -82,7 +82,30 @@ def _message(response: httpx.Response, body: Any | None) -> str:
             return str(error["message"])
         if isinstance(body.get("message"), str):
             return str(body["message"])
+        if isinstance(body.get("detail"), str):
+            return str(body["detail"])
+        if isinstance(body.get("detail"), list):
+            return _message_from_validation_errors(body["detail"], response.status_code)
+    if isinstance(body, list):
+        return _message_from_validation_errors(body, response.status_code)
     return f"Request failed with status {response.status_code}"
+
+
+def _message_from_validation_errors(errors: list[Any], status_code: int) -> str:
+    messages: list[str] = []
+    for error in errors:
+        if not isinstance(error, dict):
+            continue
+        message = error.get("msg")
+        location = error.get("loc")
+        if isinstance(message, str):
+            if isinstance(location, list | tuple) and location:
+                messages.append(f"{'.'.join(str(part) for part in location)}: {message}")
+            else:
+                messages.append(message)
+    if messages:
+        return "; ".join(messages)
+    return f"Request failed with status {status_code}"
 
 
 def error_from_response(response: httpx.Response) -> CodexError:

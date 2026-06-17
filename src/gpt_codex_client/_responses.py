@@ -73,7 +73,7 @@ class ResponsesResource:
             model=model,
             input=input,
             instructions=instructions,
-            stream=stream,
+            stream=True,
             tools=tools,
             tool_choice=tool_choice,
             parallel_tool_calls=parallel_tool_calls,
@@ -93,9 +93,9 @@ class ResponsesResource:
                     extra_headers=extra_headers,
                 ),
             )
-        payload = cast(
-            JsonObject,
-            self._client._request(
+        response_stream = cast(
+            ResponseStream,
+            self._client._stream(
                 "POST",
                 "/responses",
                 json=body,
@@ -103,7 +103,10 @@ class ResponsesResource:
                 extra_headers=extra_headers,
             ),
         )
-        return Response.from_dict(payload)
+        with response_stream as opened_stream:
+            for _event in opened_stream:
+                pass
+            return opened_stream.get_final_response()
 
     def parse(
         self,
