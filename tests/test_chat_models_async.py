@@ -26,6 +26,7 @@ def test_models_list_cache(tmp_path: Path) -> None:
     def handler(request: httpx.Request) -> httpx.Response:
         nonlocal calls
         calls += 1
+        assert request.url.params["client_version"] == "0.1.0"
         return httpx.Response(200, json={"data": [{"id": "m1"}, {"id": "m2"}]})
 
     http_client = httpx.Client(transport=httpx.MockTransport(handler))

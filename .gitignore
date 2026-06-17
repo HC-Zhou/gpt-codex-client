@@ -1,4 +1,5 @@
 .DS_Store
+.idea/
 .ruff_cache/
 .mypy_cache/
 .pytest_cache/
@@ -11,4 +12,3 @@ __pycache__/
 site/
 .coverage
 htmlcov/
-
