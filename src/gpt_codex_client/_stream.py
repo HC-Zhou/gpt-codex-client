@@ -124,6 +124,8 @@ class ResponseStream:
         response_payload = event.data.get("response")
         if isinstance(response_payload, dict):
             response = Response.from_dict(response_payload)
+            if not response.output_text and self._output_text_parts:
+                response.output_text = "".join(self._output_text_parts)
             event.response = response
             if event.type in {"response.completed", "response.incomplete"}:
                 self.final_response = response

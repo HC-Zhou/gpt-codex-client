@@ -81,9 +81,8 @@ def test_chat_completions_create(tmp_path: Path) -> None:
 
     def handler(request: httpx.Request) -> httpx.Response:
         seen["body"] = json.loads(request.content.decode("utf-8"))
-        return httpx.Response(
-            200,
-            json={
+        payload = {
+            "response": {
                 "id": "resp_1",
                 "model": "m",
                 "status": "completed",
@@ -94,8 +93,10 @@ def test_chat_completions_create(tmp_path: Path) -> None:
                     },
                     {"type": "function_call", "name": "lookup", "arguments": "{}"},
                 ],
-            },
-        )
+            }
+        }
+        body = f"event: response.completed\ndata: {json.dumps(payload)}\n\n"
+        return httpx.Response(200, content=body.encode("utf-8"))
 
     http_client = httpx.Client(transport=httpx.MockTransport(handler))
     client = CodexClient(
@@ -130,7 +131,12 @@ async def test_async_responses_and_models_lazy_auth(tmp_path: Path) -> None:
     def handler(request: httpx.Request) -> httpx.Response:
         if request.url.path == "/backend-api/codex/models":
             return httpx.Response(200, json={"data": [{"id": "m1"}]})
-        return httpx.Response(200, json={"id": "resp_1", "model": "m", "output_text": "async"})
+        body = (
+            'event: response.output_text.delta\ndata: {"delta":"async"}\n\n'
+            "event: response.completed\n"
+            'data: {"response":{"id":"resp_1","model":"m","status":"completed","output":[]}}\n\n'
+        )
+        return httpx.Response(200, content=body.encode("utf-8"))
 
     http_client = httpx.AsyncClient(transport=httpx.MockTransport(handler))
     client = AsyncCodexClient(

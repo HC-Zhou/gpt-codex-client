@@ -30,7 +30,7 @@ def test_responses_create_serializes_body(tmp_path: Path) -> None:
     def handler(request: httpx.Request) -> httpx.Response:
         seen["headers"] = dict(request.headers)
         seen["body"] = json.loads(request.content.decode("utf-8"))
-        return httpx.Response(200, json={"id": "resp_1", "model": "m", "output_text": "ok"})
+        return _sse_response("ok")
 
     http_client = httpx.Client(transport=httpx.MockTransport(handler))
     client = CodexClient(
@@ -54,8 +54,9 @@ def test_responses_create_serializes_body(tmp_path: Path) -> None:
     assert seen["headers"]["authorization"] == "Bearer access"
     assert seen["body"] == {
         "model": "m",
-        "input": "hello",
-        "stream": False,
+        "input": [{"role": "user", "content": "hello"}],
+        "stream": True,
+        "store": False,
         "instructions": "be terse",
         "tools": [{"type": "function", "name": "lookup", "parameters": {"type": "object"}}],
         "tool_choice": "auto",
@@ -75,8 +76,7 @@ def test_sse_parser_and_stream_final_response(tmp_path: Path) -> None:
         'event: response.output_text.delta\ndata: {"delta":"hel"}\n\n'
         'event: response.output_text.delta\ndata: {"delta":"lo"}\n\n'
         "event: response.completed\n"
-        'data: {"response":{"id":"resp_1","model":"m","status":"completed",'
-        '"output_text":"hello"}}\n\n'
+        'data: {"response":{"id":"resp_1","model":"m","status":"completed","output":[]}}\n\n'
         "data: [DONE]\n\n"
     )
 
@@ -119,9 +119,7 @@ def test_responses_parse_pydantic_model(tmp_path: Path) -> None:
     def handler(request: httpx.Request) -> httpx.Response:
         body = json.loads(request.content.decode("utf-8"))
         assert body["text"]["format"]["type"] == "json_schema"
-        return httpx.Response(
-            200, json={"id": "resp_1", "model": "m", "output_text": '{"title":"ok"}'}
-        )
+        return _sse_response('{"title":"ok"}')
 
     http_client = httpx.Client(transport=httpx.MockTransport(handler))
     client = CodexClient(
@@ -138,9 +136,7 @@ def test_responses_parse_manual_schema(tmp_path: Path) -> None:
     token_path = _token_file(tmp_path)
 
     def handler(request: httpx.Request) -> httpx.Response:
-        return httpx.Response(
-            200, json={"id": "resp_1", "model": "m", "output_text": '{"ok": true}'}
-        )
+        return _sse_response('{"ok": true}')
 
     http_client = httpx.Client(transport=httpx.MockTransport(handler))
     client = CodexClient(
@@ -171,7 +167,7 @@ def test_retry_for_429_and_no_retry_for_400(
             return httpx.Response(
                 429, headers={"retry-after": "0"}, json={"error": {"message": "slow"}}
             )
-        return httpx.Response(200, json={"id": "resp_1", "model": "m", "output_text": "ok"})
+        return httpx.Response(200, json={"data": [{"id": "m"}]})
 
     http_client = httpx.Client(transport=httpx.MockTransport(handler))
     client = CodexClient(
@@ -181,7 +177,7 @@ def test_retry_for_429_and_no_retry_for_400(
         max_retries=1,
     )
 
-    assert client.responses.create(model="m", input="hello").output_text == "ok"
+    assert [model.id for model in client.models.list()] == ["m"]
     assert calls == 2
     http_client.close()
 
@@ -197,7 +193,26 @@ def test_retry_for_429_and_no_retry_for_400(
     )
 
     with pytest.raises(InvalidRequestError):
-        client.responses.create(model="m", input="hello")
+        client.models.list()
+    http_client.close()
+
+
+def test_invalid_request_error_uses_detail_message(tmp_path: Path) -> None:
+    token_path = _token_file(tmp_path)
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(400, json={"detail": "Input must be a list"})
+
+    http_client = httpx.Client(transport=httpx.MockTransport(handler))
+    client = CodexClient(
+        token_path=token_path,
+        http_client=http_client,
+        base_url="https://example.test",
+        max_retries=0,
+    )
+
+    with pytest.raises(InvalidRequestError, match="Input must be a list"):
+        client.models.list()
     http_client.close()
 
 
@@ -227,3 +242,20 @@ def _token_file(tmp_path: Path) -> Path:
     token_path = tmp_path / "auth.json"
     save_token(Token(access_token="access", expires_at=time.time() + 3600), token_path)
     return token_path
+
+
+def _sse_response(output_text: str, *, model: str = "m") -> httpx.Response:
+    completed = {
+        "response": {
+            "id": "resp_1",
+            "model": model,
+            "status": "completed",
+            "output": [],
+        }
+    }
+    body = (
+        f"event: response.output_text.delta\ndata: {json.dumps({'delta': output_text})}\n\n"
+        "event: response.completed\n"
+        f"data: {json.dumps(completed)}\n\n"
+    )
+    return httpx.Response(200, content=body.encode("utf-8"))

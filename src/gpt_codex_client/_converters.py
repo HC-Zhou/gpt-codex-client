@@ -5,6 +5,8 @@ from typing import Any
 
 from ._types import FunctionTool, JsonObject, Reasoning, TextConfig
 
+DEFAULT_INSTRUCTIONS = "You are Codex, a concise coding assistant."
+
 
 def response_request_body(
     *,
@@ -20,9 +22,14 @@ def response_request_body(
     include: list[str] | None = None,
     previous_response_id: str | None = None,
 ) -> JsonObject:
-    body: JsonObject = {"model": model, "input": input, "stream": stream}
+    body: JsonObject = {
+        "model": model,
+        "input": _normalize_response_input(input),
+        "stream": stream,
+        "store": False,
+        "instructions": instructions or DEFAULT_INSTRUCTIONS,
+    }
     optional: dict[str, Any | None] = {
-        "instructions": instructions,
         "tool_choice": tool_choice,
         "parallel_tool_calls": parallel_tool_calls,
         "include": include,
@@ -40,6 +47,12 @@ def response_request_body(
     if text is not None:
         body["text"] = text.to_dict() if isinstance(text, TextConfig) else text
     return body
+
+
+def _normalize_response_input(input: str | list[Any]) -> list[Any]:
+    if isinstance(input, str):
+        return [{"role": "user", "content": input}]
+    return input
 
 
 def chat_messages_to_response_input(

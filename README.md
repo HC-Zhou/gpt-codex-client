@@ -14,9 +14,8 @@ uv add gpt-codex-client
 from gpt_codex_client import CodexClient
 
 with CodexClient(no_browser=True) as client:
-    model = client.models.list()[0].id
     response = client.responses.create(
-        model=model,
+        model="gpt-5.5",
         input="Write a short Python function that reverses a string.",
     )
     print(response.output_text)
