@@ -46,9 +46,9 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/example/gpt-codex-client"
-Documentation = "https://example.github.io/gpt-codex-client/"
-Issues = "https://github.com/example/gpt-codex-client/issues"
+Homepage = "https://github.com/HC-Zhou/gpt-codex-client"
+Documentation = "https://hc-zhou.github.io/gpt-codex-client/"
+Issues = "https://github.com/HC-Zhou/gpt-codex-client/issues"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/gpt_codex_client"]

@@ -41,6 +41,7 @@ class CodexClient:
         login_handler: LoginHandler | None = None,
         auth_client_id: str | None = None,
         client_version: str | None = None,
+        models_manifest_url: str | None = None,
         timeout: float = 120.0,
         max_retries: int = 2,
         default_headers: dict[str, str] | None = None,
@@ -53,6 +54,7 @@ class CodexClient:
         self.login_handler = login_handler
         self.auth_client_id = auth_client_id
         self.client_version = get_client_version(client_version)
+        self.models_manifest_url = models_manifest_url
         self.timeout = timeout
         self.max_retries = max_retries
         self.default_headers = default_headers or {}
@@ -63,7 +65,7 @@ class CodexClient:
 
         self.responses = ResponsesResource(self)
         self.chat = ChatResource(self)
-        self.models = ModelsResource(self)
+        self.models = ModelsResource(self, manifest_url=models_manifest_url)
 
     def __enter__(self) -> CodexClient:
         return self

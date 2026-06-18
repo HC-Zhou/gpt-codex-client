@@ -1,12 +1,11 @@
 # gpt-codex-client
 
-English | [简体中文](README.zh-CN.md)
+[English](README.md) | 简体中文
 
-`gpt-codex-client` is an OpenAI SDK-style Python client for ChatGPT/Codex
-OAuth-backed workflows. It is intentionally not an API-key client for
-`api.openai.com`; it uses a local token cache compatible with
-`~/.codex/auth.json` and requires an account that can access the relevant
-ChatGPT/Codex backend.
+`gpt-codex-client` 是一个 OpenAI SDK 风格的 Python 客户端，用于
+ChatGPT/Codex OAuth 登录支持的工作流。它不是面向 `api.openai.com` 的
+API Key 客户端；它读取和写入兼容 `~/.codex/auth.json` 的本地 token 缓存，
+并要求账号具备对应 ChatGPT/Codex 后端访问权限。
 
 ```bash
 uv add gpt-codex-client
@@ -23,11 +22,10 @@ with CodexClient(no_browser=True) as client:
     print(response.output_text)
 ```
 
-## List Models
+## 获取模型列表
 
-`client.models.list()` reads the public OpenAI Codex model registry from the
-`openai/codex` GitHub repository instead of the ChatGPT/Codex backend `/models`
-endpoint.
+`client.models.list()` 会读取 OpenAI Codex 仓库中的公开模型注册表，
+而不是调用 ChatGPT/Codex 后端的 `/models` 接口。
 
 ```python
 from gpt_codex_client import CodexClient
@@ -38,19 +36,20 @@ with CodexClient() as client:
         print(model.id)
 ```
 
-The registry source is:
+模型注册表来源：
 
 ```text
 https://raw.githubusercontent.com/openai/codex/main/codex-rs/models-manager/models.json
 ```
 
-Set `GPT_CODEX_CLIENT_MODELS_MANIFEST_URL` or pass `models_manifest_url=` to
-use another compatible registry.
+如果需要使用其他兼容的注册表，可以设置
+`GPT_CODEX_CLIENT_MODELS_MANIFEST_URL`，或在构造客户端时传入
+`models_manifest_url=`。
 
-## Authentication
+## 认证
 
-The client lazily authenticates on the first request. By default it reads and
-writes `~/.codex/auth.json` with `0600` permissions.
+客户端会在首次请求时懒加载认证。默认读取并写入 `~/.codex/auth.json`，
+保存权限为 `0600`。
 
 ```python
 from gpt_codex_client import login
@@ -58,12 +57,11 @@ from gpt_codex_client import login
 login(no_browser=True)
 ```
 
-The default OAuth client id follows the ChatGPT/Codex sign-in flow used by the
-official Codex clients. If OpenAI issues a different client id for your app, set
-`GPT_CODEX_CLIENT_OAUTH_CLIENT_ID` or pass `auth_client_id=` to `CodexClient`.
+默认 OAuth client id 与官方 Codex 客户端使用的 ChatGPT/Codex 登录流程一致。
+如果你有自己的已注册 client id，可以设置 `GPT_CODEX_CLIENT_OAUTH_CLIENT_ID`，
+或在构造 `CodexClient` 时传入 `auth_client_id=`。
 
-For automation, pass a `login_handler` that receives the authorization URL and
-returns the final redirect URL:
+自动化场景可以传入 `login_handler`，它会收到授权 URL，并返回最终 redirect URL：
 
 ```python
 from gpt_codex_client import login
@@ -83,7 +81,7 @@ with CodexClient() as client:
     )
 ```
 
-Streaming returns a context manager and iterator:
+流式调用会返回 context manager 和 iterator：
 
 ```python
 with CodexClient() as client:
@@ -93,9 +91,9 @@ with CodexClient() as client:
                 print(event.data.get("delta"), end="")
 ```
 
-## Structured Output
+## 结构化输出
 
-Install the optional extra when using Pydantic models:
+使用 Pydantic 模型时安装可选 extra：
 
 ```bash
 uv add "gpt-codex-client[pydantic]"
@@ -116,10 +114,10 @@ parsed = CodexClient().responses.parse(
 print(parsed.parsed.title)
 ```
 
-## Chat Compatibility
+## Chat 兼容层
 
-The chat compatibility layer converts Chat Completions-style messages and
-function tools into Responses requests:
+Chat 兼容层会把 Chat Completions 风格的 messages 和 function tools
+转换为 Responses 请求：
 
 ```python
 completion = CodexClient().chat.completions.create(
@@ -129,7 +127,7 @@ completion = CodexClient().chat.completions.create(
 print(completion.choices[0].message.content)
 ```
 
-## Development
+## 开发
 
 ```bash
 uv sync --all-extras --dev
