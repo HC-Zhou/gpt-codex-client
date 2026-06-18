@@ -3,6 +3,8 @@ site_description: OpenAI SDK-style client for ChatGPT/Codex OAuth-backed Respons
 repo_url: https://github.com/HC-Zhou/gpt-codex-client
 theme:
   name: material
+  logo: assets/gpt-codex-client-icon.svg
+  favicon: assets/gpt-codex-client-icon.svg
   features:
     - navigation.sections
     - content.code.copy
