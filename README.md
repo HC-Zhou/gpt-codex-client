@@ -1,6 +1,25 @@
-# gpt-codex-client
+<p align="center">
+  <img src="docs/assets/gpt-codex-client-icon.svg" width="132" alt="gpt-codex-client icon">
+</p>
 
-English | [简体中文](README.zh-CN.md)
+<h1 align="center">gpt-codex-client</h1>
+
+<p align="center">
+  <strong>OpenAI SDK-style Python client for ChatGPT/Codex OAuth-backed workflows.</strong>
+</p>
+
+<p align="center">
+  English · <a href="README.zh-CN.md">简体中文</a> ·
+  <a href="https://pypi.org/project/gpt-codex-client/">PyPI</a> ·
+  <a href="https://hc-zhou.github.io/gpt-codex-client/">Docs</a>
+</p>
+
+<p align="center">
+  <a href="https://pypi.org/project/gpt-codex-client/"><img alt="PyPI" src="https://img.shields.io/pypi/v/gpt-codex-client?color=2563eb"></a>
+  <a href="https://pypi.org/project/gpt-codex-client/"><img alt="Python versions" src="https://img.shields.io/pypi/pyversions/gpt-codex-client?color=0891b2"></a>
+  <a href="LICENSE"><img alt="License" src="https://img.shields.io/github/license/HC-Zhou/gpt-codex-client?color=16a34a"></a>
+  <a href="https://github.com/HC-Zhou/gpt-codex-client/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/HC-Zhou/gpt-codex-client/actions/workflows/ci.yml/badge.svg"></a>
+</p>
 
 `gpt-codex-client` is an OpenAI SDK-style Python client for ChatGPT/Codex
 OAuth-backed workflows. It is intentionally not an API-key client for
@@ -8,9 +27,13 @@ OAuth-backed workflows. It is intentionally not an API-key client for
 `~/.codex/auth.json` and requires an account that can access the relevant
 ChatGPT/Codex backend.
 
+## Install
+
 ```bash
 uv add gpt-codex-client
 ```
+
+## Quick Start
 
 ```python
 from gpt_codex_client import CodexClient
@@ -22,6 +45,14 @@ with CodexClient(no_browser=True) as client:
     )
     print(response.output_text)
 ```
+
+## Highlights
+
+- Responses-style sync and async clients with streaming support.
+- Chat Completions compatibility for existing message/tool-call workflows.
+- OAuth PKCE login, refresh tokens, and `~/.codex/auth.json` token cache support.
+- Model discovery from the public OpenAI Codex model registry.
+- Optional Pydantic parsing for structured output.
 
 ## List Models
 

@@ -1,15 +1,38 @@
-# gpt-codex-client
+<p align="center">
+  <img src="docs/assets/gpt-codex-client-icon.svg" width="132" alt="gpt-codex-client 图标">
+</p>
 
-[English](README.md) | 简体中文
+<h1 align="center">gpt-codex-client</h1>
+
+<p align="center">
+  <strong>面向 ChatGPT/Codex OAuth 工作流的 OpenAI SDK 风格 Python 客户端。</strong>
+</p>
+
+<p align="center">
+  <a href="README.md">English</a> · 简体中文 ·
+  <a href="https://pypi.org/project/gpt-codex-client/">PyPI 软件包</a> ·
+  <a href="https://hc-zhou.github.io/gpt-codex-client/">文档</a>
+</p>
+
+<p align="center">
+  <a href="https://pypi.org/project/gpt-codex-client/"><img alt="PyPI" src="https://img.shields.io/pypi/v/gpt-codex-client?color=2563eb"></a>
+  <a href="https://pypi.org/project/gpt-codex-client/"><img alt="Python versions" src="https://img.shields.io/pypi/pyversions/gpt-codex-client?color=0891b2"></a>
+  <a href="LICENSE"><img alt="License" src="https://img.shields.io/github/license/HC-Zhou/gpt-codex-client?color=16a34a"></a>
+  <a href="https://github.com/HC-Zhou/gpt-codex-client/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/HC-Zhou/gpt-codex-client/actions/workflows/ci.yml/badge.svg"></a>
+</p>
 
 `gpt-codex-client` 是一个 OpenAI SDK 风格的 Python 客户端，用于
 ChatGPT/Codex OAuth 登录支持的工作流。它不是面向 `api.openai.com` 的
 API Key 客户端；它读取和写入兼容 `~/.codex/auth.json` 的本地 token 缓存，
 并要求账号具备对应 ChatGPT/Codex 后端访问权限。
 
+## 安装
+
 ```bash
 uv add gpt-codex-client
 ```
+
+## 快速开始
 
 ```python
 from gpt_codex_client import CodexClient
@@ -21,6 +44,14 @@ with CodexClient(no_browser=True) as client:
     )
     print(response.output_text)
 ```
+
+## 亮点
+
+- 提供 Responses 风格的同步和异步客户端，并支持流式输出。
+- 提供 Chat Completions 兼容层，便于迁移已有 messages/tool calls 代码。
+- 支持 OAuth PKCE 登录、refresh token 和 `~/.codex/auth.json` token 缓存。
+- 从 OpenAI Codex 公开模型注册表读取模型列表。
+- 可选支持 Pydantic 结构化输出解析。
 
 ## 获取模型列表
 
