@@ -20,6 +20,10 @@ DEFAULT_SCOPES = ("openid", "profile", "email", "offline_access")
 DEFAULT_TOKEN_PATH = Path("~/.codex/auth.json")
 DEFAULT_CLIENT_VERSION = "0.1.0"
 CLIENT_VERSION_ENV_VAR = "GPT_CODEX_CLIENT_VERSION"
+DEFAULT_MODELS_MANIFEST_URL = (
+    "https://raw.githubusercontent.com/openai/codex/main/codex-rs/models-manager/models.json"
+)
+MODELS_MANIFEST_URL_ENV_VAR = "GPT_CODEX_CLIENT_MODELS_MANIFEST_URL"
 USER_AGENT = "gpt-codex-client/0.1.0"
 ORIGINATOR = "gpt-codex-client"
 BETA_HEADER = "responses=v1"
@@ -101,6 +105,17 @@ def get_client_version(client_version: str | None = None) -> str:
     resolved = client_version or os.environ.get(CLIENT_VERSION_ENV_VAR) or DEFAULT_CLIENT_VERSION
     if not resolved.strip():
         raise AuthError("client_version cannot be empty")
+    return resolved
+
+
+def get_models_manifest_url(models_manifest_url: str | None = None) -> str:
+    resolved = (
+        models_manifest_url
+        or os.environ.get(MODELS_MANIFEST_URL_ENV_VAR)
+        or DEFAULT_MODELS_MANIFEST_URL
+    )
+    if not resolved.strip():
+        raise AuthError("models manifest URL cannot be empty")
     return resolved
 
 

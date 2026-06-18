@@ -102,10 +102,11 @@ class Model:
     @classmethod
     def from_dict(cls, payload: JsonObject) -> Model:
         created = payload.get("created")
+        model_id = payload.get("id") or payload.get("slug")
         return cls(
-            id=str(payload.get("id", "")),
+            id=str(model_id or ""),
             created=created if isinstance(created, int) else None,
-            owned_by=_str_or_none(payload.get("owned_by")),
+            owned_by=_str_or_none(payload.get("owned_by")) or "openai",
             raw=payload,
         )
 

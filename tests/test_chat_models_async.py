@@ -26,12 +26,24 @@ def test_models_list_cache(tmp_path: Path) -> None:
     def handler(request: httpx.Request) -> httpx.Response:
         nonlocal calls
         calls += 1
-        assert request.url.params["client_version"] == "0.1.0"
-        return httpx.Response(200, json={"data": [{"id": "m1"}, {"id": "m2"}]})
+        assert str(request.url) == "https://manifest.test/models.json"
+        return httpx.Response(
+            200,
+            json={
+                "models": [
+                    {"slug": "hidden", "visibility": "hide", "priority": 0},
+                    {"slug": "m2", "priority": 2},
+                    {"slug": "m1", "priority": 1},
+                ]
+            },
+        )
 
     http_client = httpx.Client(transport=httpx.MockTransport(handler))
     client = CodexClient(
-        token_path=token_path, http_client=http_client, base_url="https://example.test"
+        token_path=token_path,
+        http_client=http_client,
+        base_url="https://example.test",
+        models_manifest_url="https://manifest.test/models.json",
     )
 
     assert [model.id for model in client.models.list()] == ["m1", "m2"]
@@ -129,8 +141,8 @@ async def test_async_responses_and_models_lazy_auth(tmp_path: Path) -> None:
     token_path = _token_file(tmp_path)
 
     def handler(request: httpx.Request) -> httpx.Response:
-        if request.url.path == "/backend-api/codex/models":
-            return httpx.Response(200, json={"data": [{"id": "m1"}]})
+        if request.url.host == "manifest.test":
+            return httpx.Response(200, json={"models": [{"slug": "m1"}]})
         body = (
             'event: response.output_text.delta\ndata: {"delta":"async"}\n\n'
             "event: response.completed\n"
@@ -143,6 +155,7 @@ async def test_async_responses_and_models_lazy_auth(tmp_path: Path) -> None:
         token_path=token_path,
         http_client=http_client,
         base_url="https://example.test/backend-api/codex",
+        models_manifest_url="https://manifest.test/models.json",
     )
 
     response = await client.responses.create(model="m", input="hi")
