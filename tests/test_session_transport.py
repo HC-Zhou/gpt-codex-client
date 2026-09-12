@@ -748,3 +748,43 @@ async def test_websocket_parse_and_event_passthrough(
         assert parsed.parsed == {} and parsed.response.usage.cached_tokens == 80
     finally:
         await shutdown(client, asynchronous)
+
+
+@pytest.mark.parametrize("stage", ["send", "recv"])
+async def test_async_io_timeout_releases_session(
+    monkeypatch: pytest.MonkeyPatch, stage: str
+) -> None:
+    socket = Socket()
+    cancelled = asyncio.Event()
+
+    async def block() -> None:
+        try:
+            await asyncio.Future[None]()
+        finally:
+            cancelled.set()
+
+    class TimedSocket(AsyncSocket):
+        async def send(self, data: str) -> None:
+            if stage == "send":
+                await block()
+            else:
+                await super().send(data)
+
+        async def recv(self) -> str:
+            await block()
+            raise AssertionError("unreachable")
+
+    async def connect(url: str, **options: Any) -> TimedSocket:
+        return TimedSocket(socket)
+
+    monkeypatch.setattr(ws, "connect_function", lambda _: connect)
+    client = client_for(True)
+    try:
+        with pytest.raises(StreamError, match="interrupted"):
+            await client.responses.create(
+                model="m", input=[], transport="websocket", session_id="s", timeout=0.01
+            )
+        assert cancelled.is_set()
+        assert socket.closed and not client._sessions.entries
+    finally:
+        await client.aclose()

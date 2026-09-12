@@ -19,9 +19,13 @@ Entries follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Safe pre-submission SSE fallback in auto mode and one full-context recovery for an explicitly missing automatic continuation; ambiguous failures aren't replayed.
 - Public typed `Usage` with six server counters, unknown values preserved as `None`, unmodified input totals, and raw usage retention across Responses and terminal Chat results.
 
+### Fixed
+
+- Preserved asynchronous WebSocket cancellation on Python 3.10/3.11 when cancellation races with completed I/O; timed-out child operations are cancelled and drained before releasing the session.
+
 ### Validation and upgrade
 
-- 224 offline tests passed, including reasoning alias mapping across SSE and WebSocket entrypoints; formatting, lint, strict typing, package build, and strict bilingual documentation build passed.
+- 226 offline tests passed, including reasoning alias mapping across SSE and WebSocket entrypoints; formatting, lint, strict typing, package build, and strict bilingual documentation build passed.
 
 - Automated tests use offline mocks; the recorded synchronous real case separately verifies WebSocket reuse, delta submission, and SSE replay.
 - The real second request used 25% fewer JSON bytes than its full equivalent; all three requests reported zero cache-read tokens. No prompt-cache or latency benefit is claimed.

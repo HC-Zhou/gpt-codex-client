@@ -7,7 +7,7 @@ import json
 import threading
 from collections.abc import AsyncIterator, Awaitable, Callable, Iterator
 from copy import deepcopy
-from typing import Any
+from typing import Any, TypeVar
 
 import httpx
 
@@ -16,6 +16,23 @@ from ._errors import APIConnectionError, StreamError, error_from_response
 from ._session_pool import Entry, SessionPool, plan_request
 from ._stream import ResponseStream
 from ._types import JsonObject, Response, ResponseStreamEvent
+
+T = TypeVar("T")
+
+
+async def wait_for_io(operation: Awaitable[T], timeout: float) -> T:
+    """Bound I/O without wait_for's pre-3.12 completion/cancellation race."""
+    task = asyncio.ensure_future(operation)
+    try:
+        done, _ = await asyncio.wait({task}, timeout=timeout)
+        if not done:
+            raise TimeoutError("WebSocket I/O timed out")
+        return task.result()
+    finally:
+        if not task.done():
+            task.cancel()
+        # Drain the child on timeout or cancellation; never swallow parent cancellation.
+        await asyncio.gather(task, return_exceptions=True)
 
 
 class ConnectFailure(APIConnectionError):
@@ -297,13 +314,13 @@ class AsyncWebSocketSource:
                 raise StreamError("Session was cleared", kind="transport")
             seen_output = False
             try:
-                await asyncio.wait_for(
+                await wait_for_io(
                     entry.socket.send(json.dumps({"type": "response.create", **self.request})),
                     timeout=self.timeout,
                 )
                 while True:
                     event = decode_frame(
-                        await asyncio.wait_for(entry.socket.recv(), timeout=self.timeout)
+                        await wait_for_io(entry.socket.recv(), timeout=self.timeout)
                     )
                     if not entry.valid:
                         raise StreamError("Session was cleared", kind="transport")
