@@ -1,0 +1,4 @@
+Generator: built-in image_gen
+Asset: gpt-codex-client-v1.png
+Prompt:
+Create a new premium open-source Python SDK project icon for 'gpt-codex-client' v1.0. Square 1024px icon. Original abstract symbol of two interlocking code brackets forming a compact angular C around a small bright data packet, communicating reliable bidirectional streaming and connection. A very dark midnight navy rounded-square tile with generous outer breathing space; bold mint-teal and warm ivory geometric strokes, tiny electric blue accent. Extremely simple silhouette readable at 24px, flat vector-like polished graphic, precise balanced geometry, crisp edges, no lettering, no words, no version text, no OpenAI knot, no Python logo, no gradients, no 3D mockup, no watermark. Single centered icon filling 80% of canvas.
