@@ -7,8 +7,20 @@ from types import TracebackType
 import httpx
 
 from ._errors import StreamError, error_from_response
+from ._response_state import ResponseState
 from ._stream import SSEDecoder
 from ._types import Response, ResponseStreamEvent
+
+
+async def _events(response: httpx.Response) -> AsyncIterator[ResponseStreamEvent]:
+    decoder = SSEDecoder()
+    async for line in response.aiter_lines():
+        event = decoder.feed_line(line)
+        if event is not None:
+            yield event
+    event = decoder.finish()
+    if event is not None:
+        yield event
 
 
 class AsyncResponseStream:
@@ -17,19 +29,24 @@ class AsyncResponseStream:
         self._response: httpx.Response | None = None
         self._entered = False
         self._closed = False
-        self._output_text_parts: list[str] = []
-        self.final_response: Response | None = None
+        self._state = ResponseState()
+
+    @property
+    def final_response(self) -> Response | None:
+        return self._state.final
 
     async def __aenter__(self) -> AsyncResponseStream:
-        if self._entered:
-            return self
-        self._response = await self._manager.__aenter__()
-        self._entered = True
-        if self._response.status_code >= 400:
-            await self._response.aread()
-            error = error_from_response(self._response)
-            await self.aclose()
-            raise error
+        if self._closed:
+            raise StreamError("Stream is closed")
+        if not self._entered:
+            self._response = await self._manager.__aenter__()
+            self._entered = True
+            if self._response.status_code >= 400:
+                try:
+                    await self._response.aread()
+                    raise error_from_response(self._response)
+                finally:
+                    await self.aclose()
         return self
 
     async def __aexit__(
@@ -43,66 +60,38 @@ class AsyncResponseStream:
     def __aiter__(self) -> AsyncIterator[ResponseStreamEvent]:
         return self._iterate()
 
+    async def _iterate(self) -> AsyncIterator[ResponseStreamEvent]:
+        if self._state.is_terminal():
+            return
+        if not self._entered:
+            await self.__aenter__()
+        if self._response is None or self._closed:
+            raise StreamError("Stream is not open")
+        try:
+            async for event in _events(self._response):
+                recorded = self._state.record(event)
+                if self._state.is_terminal():
+                    await self.aclose()
+                    yield recorded
+                    return
+                yield recorded
+            self._state.fail("Stream ended before a terminal response", kind="truncated")
+        except StreamError as error:
+            if self._state.error is None:
+                error.partial_response = self._state.snapshot()
+                self._state.error = error
+            raise
+        except httpx.RequestError:
+            self._state.fail("Response stream interrupted", kind="transport")
+        finally:
+            await self.aclose()
+
     async def aclose(self) -> None:
         if self._closed:
             return
-        if not self._entered:
-            self._closed = True
-            return
-        await self._manager.__aexit__(None, None, None)
         self._closed = True
+        if self._entered:
+            await self._manager.__aexit__(None, None, None)
 
     async def get_final_response(self) -> Response:
-        if self.final_response is None:
-            self.final_response = Response(
-                id=None,
-                model=None,
-                output_text="".join(self._output_text_parts),
-                status=None,
-                raw={},
-            )
-        return self.final_response
-
-    async def _iterate(self) -> AsyncIterator[ResponseStreamEvent]:
-        close_when_done = False
-        if not self._entered:
-            await self.__aenter__()
-            close_when_done = True
-        if self._response is None:
-            raise StreamError("Stream response is not open")
-        decoder = SSEDecoder()
-        try:
-            async for line in self._response.aiter_lines():
-                event = decoder.feed_line(line)
-                if event is not None:
-                    yield self._record_event(event)
-            event = decoder.finish()
-            if event is not None:
-                yield self._record_event(event)
-        finally:
-            if close_when_done:
-                await self.aclose()
-
-    def _record_event(self, event: ResponseStreamEvent) -> ResponseStreamEvent:
-        delta = event.data.get("delta")
-        if event.type == "response.output_text.delta" and isinstance(delta, str):
-            self._output_text_parts.append(delta)
-
-        response_payload = event.data.get("response")
-        if isinstance(response_payload, dict):
-            response = Response.from_dict(response_payload)
-            if not response.output_text and self._output_text_parts:
-                response.output_text = "".join(self._output_text_parts)
-            event.response = response
-            if event.type in {"response.completed", "response.incomplete"}:
-                self.final_response = response
-        elif event.type == "response.completed":
-            self.final_response = Response(
-                id=None,
-                model=None,
-                output_text="".join(self._output_text_parts),
-                status="completed",
-                raw=event.data,
-            )
-            event.response = self.final_response
-        return event
+        return self._state.result()

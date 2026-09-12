@@ -1,6 +1,9 @@
 from __future__ import annotations
 
 import asyncio
+import math
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
 from pathlib import Path
 from types import TracebackType
 from typing import Any
@@ -28,6 +31,7 @@ from ._errors import (
     CodexError,
     error_from_response,
     is_retryable_error,
+    retry_delay,
 )
 from ._types import JsonObject
 
@@ -45,6 +49,7 @@ class AsyncCodexClient:
         models_manifest_url: str | None = None,
         timeout: float = 120.0,
         max_retries: int = 2,
+        max_retry_delay: float = 60.0,
         default_headers: dict[str, str] | None = None,
         http_client: httpx.AsyncClient | None = None,
         base_url: str = DEFAULT_BASE_URL,
@@ -57,7 +62,12 @@ class AsyncCodexClient:
         self.client_version = get_client_version(client_version)
         self.models_manifest_url = models_manifest_url
         self.timeout = timeout
+        if isinstance(max_retries, bool) or not isinstance(max_retries, int) or max_retries < 0:
+            raise ValueError("max_retries must be a non-negative integer")
+        if not math.isfinite(max_retry_delay) or max_retry_delay < 0:
+            raise ValueError("max_retry_delay must be finite and non-negative")
         self.max_retries = max_retries
+        self.max_retry_delay = max_retry_delay
         self.default_headers = default_headers or {}
         self.base_url = base_url.rstrip("/") + "/"
         self._http_client = http_client or httpx.AsyncClient(timeout=timeout)
@@ -135,15 +145,46 @@ class AsyncCodexClient:
         extra_headers: dict[str, str] | None = None,
     ) -> AsyncResponseStream:
         url = urljoin(self.base_url, path.lstrip("/"))
-        manager = self._http_client.stream(
-            method,
-            url,
-            json=json,
-            params=self._params(),
-            headers=await self._headers(extra_headers),
-            timeout=timeout or self.timeout,
-        )
-        return AsyncResponseStream(manager)
+        headers = await self._headers(extra_headers)
+
+        @asynccontextmanager
+        async def opened() -> AsyncIterator[httpx.Response]:
+            for attempt in range(self.max_retries + 1):
+                manager = self._http_client.stream(
+                    method,
+                    url,
+                    json=json,
+                    params=self._params(),
+                    headers=headers,
+                    timeout=timeout or self.timeout,
+                )
+                error: CodexError
+                try:
+                    response = await manager.__aenter__()
+                except httpx.TimeoutException as exc:
+                    error = APITimeoutError(str(exc))
+                except httpx.RequestError as exc:
+                    error = APIConnectionError(str(exc))
+                else:
+                    if response.status_code < 400:
+                        try:
+                            yield response
+                        finally:
+                            await manager.__aexit__(None, None, None)
+                        return
+                    try:
+                        await response.aread()
+                        error = error_from_response(response)
+                    finally:
+                        await manager.__aexit__(None, None, None)
+                    if not is_retryable_error(error):
+                        raise error
+                if attempt >= self.max_retries:
+                    raise error
+                delay = retry_delay(attempt, error, self.max_retry_delay)
+                await self._sleep_before_retry(attempt, delay)
+
+        return AsyncResponseStream(opened())
 
     def _params(self) -> dict[str, str]:
         return {"client_version": self.client_version}

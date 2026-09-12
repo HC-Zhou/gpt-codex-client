@@ -1,8 +1,11 @@
 from __future__ import annotations
 
 import time
-from dataclasses import dataclass, field
+from copy import deepcopy
+from dataclasses import asdict, dataclass, field
 from typing import Any, Generic, TypeVar
+
+from ._errors import StreamError
 
 T = TypeVar("T")
 
@@ -78,6 +81,19 @@ class Response:
             raw=payload,
         )
 
+    def to_input_items(self) -> list[JsonObject]:
+        if self.status != "completed":
+            raise StreamError("Only completed responses can be replayed", partial_response=self)
+        return deepcopy(self.output)
+
+    def provider_context(self) -> JsonObject:
+        return {
+            "version": 1,
+            "provider": "codex",
+            "model": self.model,
+            "output_items": self.to_input_items(),
+        }
+
 
 @dataclass
 class ParsedResponse(Generic[T]):
@@ -116,6 +132,10 @@ class ChatMessage:
     role: str
     content: str | None = None
     tool_calls: list[JsonObject] | None = None
+    provider_data: JsonObject | None = None
+
+    def to_dict(self) -> JsonObject:
+        return {key: value for key, value in asdict(self).items() if value is not None}
 
 
 @dataclass
@@ -130,6 +150,7 @@ class ChatDelta:
     role: str | None = None
     content: str | None = None
     tool_calls: list[JsonObject] | None = None
+    provider_data: JsonObject | None = None
 
 
 @dataclass
@@ -149,14 +170,17 @@ class ChatCompletion:
     raw: JsonObject = field(default_factory=dict)
 
     @classmethod
-    def from_response(cls, response: Response) -> ChatCompletion:
+    def from_response(cls, response: Response, *, preserve_context: bool = False) -> ChatCompletion:
         tool_calls = _extract_tool_calls(response.output)
         message = ChatMessage(
             role="assistant",
             content=response.output_text or None,
             tool_calls=tool_calls or None,
+            provider_data=response.provider_context()
+            if preserve_context and response.status == "completed"
+            else None,
         )
-        choice = ChatChoice(index=0, message=message, finish_reason=_finish_reason(response.status))
+        choice = ChatChoice(index=0, message=message, finish_reason=chat_finish_reason(response))
         return cls(
             id=response.id,
             model=response.model,
@@ -193,7 +217,7 @@ def _extract_output_text(payload: JsonObject, output: list[JsonObject]) -> str:
     chunks: list[str] = []
     for item in output:
         item_type = item.get("type")
-        if item_type in {"message", "reasoning"}:
+        if item_type == "message":
             content = item.get("content")
             if isinstance(content, list):
                 for part in content:
@@ -211,18 +235,40 @@ def _extract_output_text(payload: JsonObject, output: list[JsonObject]) -> str:
 def _extract_tool_calls(output: list[JsonObject]) -> list[JsonObject]:
     calls: list[JsonObject] = []
     for item in output:
-        item_type = item.get("type")
-        if item_type in {"function_call", "tool_call"}:
-            calls.append(item)
-        nested = item.get("tool_calls")
-        if isinstance(nested, list):
-            calls.extend(call for call in nested if isinstance(call, dict))
+        kind = item.get("type", "")
+        if kind == "function_call":
+            if not all(
+                isinstance(item.get(k), str) and item.get(k) for k in ("call_id", "name")
+            ) or not isinstance(item.get("arguments"), str):
+                raise StreamError("Invalid function call output")
+            calls.append(
+                {
+                    "id": item["call_id"],
+                    "type": "function",
+                    "function": {"name": item["name"], "arguments": item["arguments"]},
+                }
+            )
+        elif isinstance(kind, str) and (kind.endswith("_call") or kind == "tool_call"):
+            raise StreamError(
+                "Tool output cannot be represented as a Chat function", kind="unsupported"
+            )
     return calls
 
 
-def _finish_reason(status: str | None) -> str | None:
-    if status in {None, "completed"}:
-        return "stop"
-    if status == "incomplete":
-        return "length"
-    return status
+def chat_finish_reason(response: Response) -> str:
+    if response.status == "incomplete":
+        details = response.raw.get("incomplete_details", {})
+        reason = details.get("reason") if isinstance(details, dict) else None
+        if reason == "max_output_tokens":
+            return "length"
+        if reason == "content_filter":
+            return "content_filter"
+        raise StreamError(
+            "Unsupported incomplete response reason",
+            kind="incomplete",
+            code=reason if isinstance(reason, str) else None,
+            partial_response=response,
+        )
+    if response.status != "completed":
+        raise StreamError("Chat response is not completed", partial_response=response)
+    return "tool_calls" if _extract_tool_calls(response.output) else "stop"

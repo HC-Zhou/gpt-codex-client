@@ -9,6 +9,7 @@ from typing import Any
 import httpx
 
 from ._errors import StreamError, error_from_response
+from ._response_state import ResponseState
 from ._types import Response, ResponseStreamEvent
 
 
@@ -60,19 +61,24 @@ class ResponseStream:
         self._response: httpx.Response | None = None
         self._entered = False
         self._closed = False
-        self._output_text_parts: list[str] = []
-        self.final_response: Response | None = None
+        self._state = ResponseState()
+
+    @property
+    def final_response(self) -> Response | None:
+        return self._state.final
 
     def __enter__(self) -> ResponseStream:
-        if self._entered:
-            return self
-        self._response = self._manager.__enter__()
-        self._entered = True
-        if self._response.status_code >= 400:
-            self._response.read()
-            error = error_from_response(self._response)
-            self.close()
-            raise error
+        if self._closed:
+            raise StreamError("Stream is closed")
+        if not self._entered:
+            self._response = self._manager.__enter__()
+            self._entered = True
+            if self._response.status_code >= 400:
+                try:
+                    self._response.read()
+                    raise error_from_response(self._response)
+                finally:
+                    self.close()
         return self
 
     def __exit__(
@@ -84,63 +90,40 @@ class ResponseStream:
         self.close()
 
     def __iter__(self) -> Iterator[ResponseStreamEvent]:
-        close_when_done = False
+        if self._state.is_terminal():
+            return
         if not self._entered:
             self.__enter__()
-            close_when_done = True
-        if self._response is None:
-            raise StreamError("Stream response is not open")
+        if self._response is None or self._closed:
+            raise StreamError("Stream is not open")
         try:
             for event in parse_sse_lines(self._response.iter_lines()):
-                yield self._record_event(event)
+                recorded = self._state.record(event)
+                if self._state.is_terminal():
+                    self.close()
+                    yield recorded
+                    return
+                yield recorded
+            self._state.fail("Stream ended before a terminal response", kind="truncated")
+        except StreamError as error:
+            if self._state.error is None:
+                error.partial_response = self._state.snapshot()
+                self._state.error = error
+            raise
+        except httpx.RequestError:
+            self._state.fail("Response stream interrupted", kind="transport")
         finally:
-            if close_when_done:
-                self.close()
+            self.close()
 
     def close(self) -> None:
         if self._closed:
             return
-        if not self._entered:
-            self._closed = True
-            return
-        self._manager.__exit__(None, None, None)
         self._closed = True
+        if self._entered:
+            self._manager.__exit__(None, None, None)
 
     def get_final_response(self) -> Response:
-        if self.final_response is None:
-            self.final_response = Response(
-                id=None,
-                model=None,
-                output_text="".join(self._output_text_parts),
-                status=None,
-                raw={},
-            )
-        return self.final_response
-
-    def _record_event(self, event: ResponseStreamEvent) -> ResponseStreamEvent:
-        delta = event.data.get("delta")
-        if event.type == "response.output_text.delta" and isinstance(delta, str):
-            self._output_text_parts.append(delta)
-
-        response_payload = event.data.get("response")
-        if isinstance(response_payload, dict):
-            response = Response.from_dict(response_payload)
-            if not response.output_text and self._output_text_parts:
-                response.output_text = "".join(self._output_text_parts)
-            event.response = response
-            if event.type in {"response.completed", "response.incomplete"}:
-                self.final_response = response
-        elif event.type == "response.completed":
-            self.final_response = Response(
-                id=None,
-                model=None,
-                output_text="".join(self._output_text_parts),
-                status="completed",
-                raw=event.data,
-            )
-            event.response = self.final_response
-
-        return event
+        return self._state.result()
 
 
 def _event_from_parts(event_type: str | None, data_lines: list[str]) -> ResponseStreamEvent:
@@ -149,10 +132,10 @@ def _event_from_parts(event_type: str | None, data_lines: list[str]) -> Response
         return ResponseStreamEvent(type="done", data={})
     try:
         parsed: Any = json.loads(data_text)
-    except json.JSONDecodeError:
-        parsed = {"data": data_text}
+    except json.JSONDecodeError as exc:
+        raise StreamError("Invalid SSE JSON", kind="protocol") from exc
     if not isinstance(parsed, dict):
-        parsed = {"data": parsed}
+        raise StreamError("SSE JSON must be an object", kind="protocol")
     resolved_type = event_type
     if resolved_type is None and isinstance(parsed.get("type"), str):
         resolved_type = parsed["type"]
