@@ -1,0 +1,102 @@
+{
+  "seq": 181,
+  "turn": 3,
+  "elapsed_ms": 8732.146,
+  "kind": "http.request",
+  "method": "POST",
+  "url": "https://chatgpt.com/backend-api/codex/responses?client_version=0.1.0",
+  "headers": {
+    "authorization": "<redacted>",
+    "content-type": "application/json",
+    "accept": "application/json",
+    "user-agent": "gpt-codex-client/0.1.0",
+    "openai-beta": "responses=v1",
+    "originator": "gpt-codex-client",
+    "chatgpt-account-id": "<redacted>",
+    "session-id": "protocol-case-d808093affd3443b8ec3d200a5d2fa31",
+    "x-client-request-id": "protocol-case-d808093affd3443b8ec3d200a5d2fa31"
+  },
+  "bytes": 2067,
+  "sha256": "3085d2b677d54e7679e17eabb4befd16152a001409215933daff0e309566e8e1",
+  "payload": {
+    "model": "gpt-5.5",
+    "input": [
+      {
+        "role": "user",
+        "content": "演示报价：单价129.50元，数量2，折扣率10%。请调用calculate_quote计算折后总额，然后说明计算结果。"
+      },
+      {
+        "id": "fc_0861e76844c4855e016aa5680aeb9487d09c02ec403abfc007",
+        "type": "function_call",
+        "status": "completed",
+        "arguments": "{\"unit_price\":129.5,\"quantity\":2,\"discount_rate\":0.1}",
+        "call_id": "call_guVJLZrBpwwdl78P7aWmDL82",
+        "name": "calculate_quote"
+      },
+      {
+        "type": "function_call_output",
+        "call_id": "call_guVJLZrBpwwdl78P7aWmDL82",
+        "output": "{\"currency\": \"CNY\", \"subtotal\": \"259.00\", \"discount_amount\": \"25.90\", \"total\": \"233.10\", \"demo_data\": true}"
+      },
+      {
+        "id": "msg_0861e76844c4855e016aa5680da65c87d0bc12eb2bb162939a",
+        "type": "message",
+        "status": "completed",
+        "content": [
+          {
+            "type": "output_text",
+            "annotations": [],
+            "logprobs": [],
+            "text": "演示报价结果如下：\n\n- 小计：259.00 元\n- 折扣金额：25.90 元\n- 折后总额：233.10 元\n\n以上为演示数据，非真实购买价格。"
+          }
+        ],
+        "phase": "final_answer",
+        "role": "assistant"
+      },
+      {
+        "role": "user",
+        "content": "请根据已有工具结果，只输出折后总额，不重新调用工具。"
+      }
+    ],
+    "stream": true,
+    "store": false,
+    "instructions": "You are a quote assistant in a synthetic protocol demonstration. Use calculate_quote exactly once when no tool result exists. After a tool result, answer briefly in Chinese using that result; do not call tools again unless asked to calculate new numbers. Do not invent prices or claim real purchases.",
+    "tool_choice": "auto",
+    "parallel_tool_calls": false,
+    "include": [
+      "reasoning.encrypted_content"
+    ],
+    "prompt_cache_key": "protocol-case-d808093affd3443b8ec3d200a5d2fa31",
+    "tools": [
+      {
+        "type": "function",
+        "name": "calculate_quote",
+        "description": "Compute a demo quote from the supplied numeric inputs. All prices are demonstration data.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "unit_price": {
+              "type": "number"
+            },
+            "quantity": {
+              "type": "integer"
+            },
+            "discount_rate": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "unit_price",
+            "quantity",
+            "discount_rate"
+          ],
+          "additionalProperties": false
+        },
+        "strict": true
+      }
+    ],
+    "reasoning": {
+      "effort": "low"
+    }
+  }
+}

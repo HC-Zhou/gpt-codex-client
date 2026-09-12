@@ -1,0 +1,960 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="面向 ChatGPT/Codex OAuth 后端的 Python 客户端。">
+      
+      
+      
+        <link rel="canonical" href="https://hc-zhou.github.io/gpt-codex-client/zh/responses/">
+      
+      
+        <link rel="prev" href="../authentication/">
+      
+      
+        <link rel="next" href="../protocol/">
+      
+      
+        
+          <link rel="alternate" href="../../responses/" hreflang="en">
+        
+          <link rel="alternate" href="./" hreflang="zh">
+        
+      
+      
+      <link rel="icon" href="../../assets/gpt-codex-client-v1.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Responses 接口 - gpt-codex-client</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#responses" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../" title="gpt-codex-client" class="md-header__button md-logo" aria-label="gpt-codex-client" data-md-component="logo">
+      
+  <img src="../../assets/gpt-codex-client-v1.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            gpt-codex-client
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Responses 接口
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="选择当前语言">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="../../responses/" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="zh" class="md-select__link">
+              简体中文
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/HC-Zhou/gpt-codex-client" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../" title="gpt-codex-client" class="md-nav__button md-logo" aria-label="gpt-codex-client" data-md-component="logo">
+      
+  <img src="../../assets/gpt-codex-client-v1.png" alt="logo">
+
+    </a>
+    gpt-codex-client
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/HC-Zhou/gpt-codex-client" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    快速开始
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../authentication/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    身份认证
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Responses 接口
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Responses 接口
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        原生输出回放
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#websocket" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        缓存标识与可选 WebSocket
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="缓存标识与可选 WebSocket">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        资源生命周期
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        类型化 usage
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gpt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GPT 推理强度
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../protocol/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    协议与实测案例
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chat-compatibility/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chat 兼容接口
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../streaming/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    流式响应
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../structured-output/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    结构化输出
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tool-calls/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    工具调用
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    模型列表
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../errors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    错误处理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../release/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    发布流程
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        原生输出回放
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#websocket" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        缓存标识与可选 WebSocket
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="缓存标识与可选 WebSocket">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        资源生命周期
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        类型化 usage
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gpt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GPT 推理强度
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="responses">Responses 接口</h1>
+<pre><code class="language-python">from gpt_codex_client import CodexClient, FunctionTool, Reasoning
+
+response = CodexClient().responses.create(
+    model=&quot;gpt-5.5&quot;,
+    input=&quot;Find the answer.&quot;,
+    tools=[FunctionTool(name=&quot;lookup&quot;, parameters={&quot;type&quot;: &quot;object&quot;})],
+    reasoning=Reasoning(effort=&quot;medium&quot;),
+)
+</code></pre>
+<p>使用 <code>client.models.list()</code> 发现公开清单中的模型名称。清单中存在某个模型不代表当前账号有权调用。</p>
+<h2 id="_1">原生输出回放</h2>
+<pre><code class="language-python">history = [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Look up record 42&quot;}]
+response = client.responses.create(
+    model=&quot;model&quot;, input=history, tools=[FunctionTool(name=&quot;lookup&quot;)],
+    preserve_context=True,
+)
+history.extend(response.to_input_items())
+for item in response.output:
+    if item.get(&quot;type&quot;) == &quot;function_call&quot;:
+        # Validate and execute in your application; this is example output.
+        history.append({&quot;type&quot;: &quot;function_call_output&quot;, &quot;call_id&quot;: item[&quot;call_id&quot;],
+                        &quot;output&quot;: &quot;record 42: example result&quot;})
+next_response = client.responses.create(model=&quot;model&quot;, input=history)
+</code></pre>
+<p><code>to_input_items()</code> 按原始顺序返回已完成输出的深拷贝，保留推理项、加密内容、消息阶段、ID 和未知字段。修改副本不会影响原响应。未完成响应不能通过此辅助方法回放；请检查 <code>output</code> 和 <code>raw</code> 后显式决定如何继续。</p>
+<p>保存历史时应记录来源模型。原生输入回放的模型兼容性由调用方负责，Chat 的版本化封套会自行校验模型。</p>
+<p><code>preserve_context=True</code> 将 <code>reasoning.encrypted_content</code> 合并进 <code>include</code>，不移除现有值。该选项默认关闭，在两个客户端的 <code>create</code> 和 <code>parse</code> 中均可使用。加密上下文保持不透明，不进入 <code>output_text</code>。原生输出保留 Chat 不支持的工具类型。</p>
+<p>这些契约已通过离线 MockTransport 测试；测试不证明真实 Codex 回放或账号可用性。</p>
+<h2 id="websocket">缓存标识与可选 WebSocket</h2>
+<p>同步/异步 <code>responses.create</code>、<code>responses.parse</code>、<code>chat.completions.create</code> 一致支持：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>默认值</th>
+<th>行为</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>session_id</code></td>
+<td><code>None</code></td>
+<td>稳定的对话标识；在 WebSocket 下用于内部连接和续接状态复用</td>
+</tr>
+<tr>
+<td><code>prompt_cache_key</code></td>
+<td><code>None</code></td>
+<td>显式缓存标识；未指定时使用 session_id 派生值</td>
+</tr>
+<tr>
+<td><code>transport</code></td>
+<td><code>"sse"</code></td>
+<td>支持 <code>sse</code>、<code>websocket</code>、<code>auto</code></td>
+</tr>
+</tbody>
+</table>
+<p>显式 key 必须非空白且不超过 64 个 Unicode 字符。session_id 必须非空白；超过 64 字符时，线上标识为 UTF-8 SHA-256 十六进制摘要，内部索引仍用完整 ID。为兼容 HTTP 头，请使用 ASCII session_id。<code>session-id</code>、<code>x-client-request-id</code> 使用 session 标识，不随显式 cache key 改变，并以大小写不敏感方式覆盖自定义同名头。没有 session 就不自动添加会话头；只有 cache key 不建立持久会话。两者都未指定时不生成标识。<code>None</code> 表示使用会话默认，不表示关闭服务端缓存，也不承诺缓存保留时长或命中。</p>
+<pre><code class="language-bash">pip install 'gpt-codex-client[websocket]'
+</code></pre>
+<pre><code class="language-python">from gpt_codex_client import CodexClient
+
+history = [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;解释这个函数。&quot;}]
+with CodexClient(session_cache_max_size=32, session_cache_idle_timeout=300) as client:
+    response = client.responses.create(
+        model=&quot;your-model&quot;, input=history,
+        session_id=&quot;conversation-42&quot;, prompt_cache_key=&quot;project-context&quot;,
+        transport=&quot;websocket&quot;, preserve_context=True,
+    )
+    history.extend(response.to_input_items())
+    history.append({&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;再总结一下。&quot;})
+    followup = client.responses.create(
+        model=&quot;your-model&quot;, input=history,
+        session_id=&quot;conversation-42&quot;, prompt_cache_key=&quot;project-context&quot;,
+        transport=&quot;websocket&quot;, preserve_context=True,
+    )
+    if followup.usage is not None:
+        print(followup.usage.input_tokens, followup.usage.cached_tokens)
+    client.close_session(&quot;conversation-42&quot;)
+</code></pre>
+<p>每次始终传完整历史。SDK 仅在旧 input + 完整 output 是当前 input 的严格前缀，且其他请求字段一致时，发送 previous_response_id 和新增 items；否则发送全量。SDK 不自动追加、编辑历史或执行工具。Chat 应通过 <code>message.to_dict()</code> 保留 <code>provider_data</code>，流式应用应保存终态 delta 的 <code>provider_data</code>。缺失这些数据可能阻止增量发送。<code>preserve_context</code> 仍默认关闭。</p>
+<p>显式传入 previous_response_id 时，绕过自动增量与缓存更新，WebSocket 使用一次性连接；SDK 不保证能为该手动 ID 恢复完整历史。所有传输保持 store=False。</p>
+<p>显式 websocket 暴露连接失败。auto 仅在确认生成帧未提交时回退 SSE，例如未安装可选依赖或连接失败；HTTP 握手拒绝直接暴露。发送结果不明或输出途中断流不自动重放。自动增量收到 previous_response_not_found 且无任何生成输出时，最多新建一次 WebSocket 并发送完整上下文恢复。</p>
+<h3 id="_2">资源生命周期</h3>
+<p>缓存由客户端内部按 session_id 管理，不提供公开 Session 对象。默认最多 32 个持久条目、空闲 300 秒过期；容量为非负整数，0 禁用持久缓存；空闲时间必须有限且大于零。缓存满时淘汰空闲 LRU；全部忙碌或同 session 正在使用时，额外请求采用一次性全量连接，不覆盖原状态。一次性连接不计入持久缓存上限，整体并发由调用方控制。连接年龄达到 55 分钟后在下次复用前更换。</p>
+<p><code>close_session(id)</code> / <code>await aclose_session(id)</code> 清理该 session 的空闲及活动连接（包括一次性连接），活动流会被中止。未知 session 和重复清理无害。<code>close()</code> / <code>await aclose()</code> 清理全部 SDK 自有 WebSocket 与过期任务，不关闭调用者传入的 httpx 客户端。异步客户端应在同一个事件循环中使用。流提前关闭、失败或取消会丢弃续接；completed 释放连接供复用，incomplete 可以返回但不会建立续接状态。</p>
+<p>可选依赖为 <code>websockets&gt;=15,&lt;16</code>。握手及接收等待使用请求 timeout，关闭握手上限为 5 秒。WebSocket 独立于 httpx，代理选择遵循 websockets 的环境/系统配置（SOCKS 还需其可选依赖），不会继承自定义 httpx transport、代理或 TLS 设置。依赖这些设置时继续使用 sse。端点变化使旧 WS 失效；本功能不处理账户隔离及轮换策略。</p>
+<h2 id="usage">类型化 usage</h2>
+<p><code>Response.usage</code>、<code>ChatCompletion.usage</code>、终态 <code>ChatCompletionChunk.usage</code> 暴露公开 <code>Usage</code>；ParsedResponse 通过 <code>response.usage</code> 访问。中间 Chat chunk 的 usage 为 None。</p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>服务端来源</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>input_tokens</code></td>
+<td><code>usage.input_tokens</code>，包含缓存输入</td>
+</tr>
+<tr>
+<td><code>output_tokens</code></td>
+<td><code>usage.output_tokens</code></td>
+</tr>
+<tr>
+<td><code>cached_tokens</code></td>
+<td><code>usage.input_tokens_details.cached_tokens</code></td>
+</tr>
+<tr>
+<td><code>cache_write_tokens</code></td>
+<td><code>usage.input_tokens_details.cache_write_tokens</code></td>
+</tr>
+<tr>
+<td><code>reasoning_tokens</code></td>
+<td><code>usage.output_tokens_details.reasoning_tokens</code></td>
+</tr>
+<tr>
+<td><code>total_tokens</code></td>
+<td><code>usage.total_tokens</code></td>
+</tr>
+</tbody>
+</table>
+<p>六个字段均为 int 或 None：缺失、null 或畸形计数保留 None，合法零保留 0。服务端完全未返回 usage 时，<code>.usage</code> 为 None。输入不扣减缓存 token，总 token 不自行推算；<code>Usage.raw</code> 深拷贝保留未知字段，<code>Response.raw</code> 继续保留原始响应。不估算费用，也不根据连接复用或增量传输推断提示词缓存命中。自动化回归使用离线模拟；另见<a href="../protocol/">同步 WebSocket/SSE 真实协议案例</a>，该案例未证明提示词缓存命中或延迟收益。</p>
+<h2 id="gpt">GPT 推理强度</h2>
+<pre><code class="language-python">response = client.responses.create(
+    model=&quot;gpt-5.5&quot;,
+    input=&quot;分析这个设计的取舍。&quot;,
+    model_reasoning_effort=&quot;high&quot;,
+)
+</code></pre>
+<p><code>model_reasoning_effort</code> 映射为线上 <code>reasoning.effort</code>，不会作为顶层协议字段发送。
+同步/异步 Responses 的 <code>create</code>、<code>parse</code>、流式调用及 <code>chat.completions.create</code> 均支持。
+已有 <code>reasoning={"effort": "high", "summary": "auto"}</code> 和 Chat 的
+<code>reasoning_effort="high"</code> 保持兼容。同值重复指定可用，冲突值会在联网前抛出
+<code>ValueError</code>；其他 reasoning 选项保留，不修改调用方输入。</p>
+<p>省略时使用后端默认值。SDK 透传非空字符串，不按模型名称过滤，也不硬编码模型能力表；
+具体支持的档位由模型和后端决定。<a href="https://developers.openai.com/codex/config-reference/">Codex 官方配置文档</a>
+列出 <code>minimal</code>、<code>low</code>、<code>medium</code>、<code>high</code> 和依模型而定的 <code>xhigh</code>。
+SDK 不会自动读取本地 Codex TOML 中的 <code>model_reasoning_effort</code>。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

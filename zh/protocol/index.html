@@ -1,0 +1,1971 @@
+
+<!doctype html>
+<html lang="zh" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="面向 ChatGPT/Codex OAuth 后端的 Python 客户端。">
+      
+      
+      
+        <link rel="canonical" href="https://hc-zhou.github.io/gpt-codex-client/zh/protocol/">
+      
+      
+        <link rel="prev" href="../responses/">
+      
+      
+        <link rel="next" href="../chat-compatibility/">
+      
+      
+        
+          <link rel="alternate" href="../../protocol/" hreflang="en">
+        
+          <link rel="alternate" href="./" hreflang="zh">
+        
+      
+      
+      <link rel="icon" href="../../assets/gpt-codex-client-v1.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>协议与实测案例 - gpt-codex-client</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#codex" class="md-skip">
+          跳转至
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="页眉">
+    <a href="../" title="gpt-codex-client" class="md-header__button md-logo" aria-label="gpt-codex-client" data-md-component="logo">
+      
+  <img src="../../assets/gpt-codex-client-v1.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            gpt-codex-client
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              协议与实测案例
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="选择当前语言">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="../../protocol/" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="zh" class="md-select__link">
+              简体中文
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="搜索" placeholder="搜索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="查找">
+        
+        <button type="reset" class="md-search__icon md-icon" title="清空当前内容" aria-label="清空当前内容" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            正在初始化搜索引擎
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/HC-Zhou/gpt-codex-client" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="导航栏" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../" title="gpt-codex-client" class="md-nav__button md-logo" aria-label="gpt-codex-client" data-md-component="logo">
+      
+  <img src="../../assets/gpt-codex-client-v1.png" alt="logo">
+
+    </a>
+    gpt-codex-client
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/HC-Zhou/gpt-codex-client" title="前往仓库" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    快速开始
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../authentication/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    身份认证
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../responses/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Responses 接口
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    协议与实测案例
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    协议与实测案例
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 范围、版本与证据
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-sdk" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. SDK 层与线上协议的对应关系
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. SDK 层与线上协议的对应关系">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 请求参数映射
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 认证与会话头
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 真实案例：模型请求工具，本地计算，再回传结果
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. 真实案例：模型请求工具，本地计算，再回传结果">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-websocket" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 第一轮：完整 WebSocket 请求
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 实际工具参数流
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 本地工具结果
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4 第二轮：自动增量续接
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#35-sse" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.5 第三轮：SSE 全量回放
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 服务端事件契约
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. 服务端事件契约">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-sdk" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 原始终态与 SDK 聚合结果必须分开
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-token" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. 缓存、字节与 token：本次究竟优化了什么
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. 缓存、字节与 token：本次究竟优化了什么">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 实测统计
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 时间口径
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 Usage 映射
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#54" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.4 响应中的缓存字段不等于请求配置
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. 错误、恢复与资源释放
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. 如何复现与检查证据
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. 本次验证结论与未验证项
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chat-compatibility/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chat 兼容接口
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../streaming/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    流式响应
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../structured-output/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    结构化输出
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tool-calls/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    工具调用
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    模型列表
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../errors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    错误处理
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../release/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    发布流程
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目录">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目录
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 范围、版本与证据
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-sdk" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. SDK 层与线上协议的对应关系
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. SDK 层与线上协议的对应关系">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1 请求参数映射
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2 认证与会话头
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 真实案例：模型请求工具，本地计算，再回传结果
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. 真实案例：模型请求工具，本地计算，再回传结果">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-websocket" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 第一轮：完整 WebSocket 请求
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 实际工具参数流
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 本地工具结果
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4 第二轮：自动增量续接
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#35-sse" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.5 第三轮：SSE 全量回放
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 服务端事件契约
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. 服务端事件契约">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-sdk" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 原始终态与 SDK 聚合结果必须分开
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-token" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. 缓存、字节与 token：本次究竟优化了什么
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. 缓存、字节与 token：本次究竟优化了什么">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1 实测统计
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2 时间口径
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3 Usage 映射
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#54" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.4 响应中的缓存字段不等于请求配置
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. 错误、恢复与资源释放
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. 如何复现与检查证据
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. 本次验证结论与未验证项
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="codex">Codex 传输协议与真实请求/响应案例</h1>
+<blockquote>
+<p>此记录是发布前的历史采集快照；源码摘要与 validation.json 描述采集当时的状态，不代表后续 v1.0 源码仍具有相同摘要。</p>
+</blockquote>
+<p>本文针对本仓库 <code>gpt-codex-client</code> 的 <strong>ChatGPT OAuth Codex 后端适配</strong>，说明 SDK 参数如何变成请求、如何消费事件、如何续接及解释 usage，并附带一次真实模型调用的脱敏数据。</p>
+<h2 id="1">1. 范围、版本与证据</h2>
+<ul>
+<li>采集开始时间：<strong>2026-09-12 22:56:04（Asia/Shanghai）</strong>，即 14:56:04 UTC。</li>
+<li>SDK 源码：本地 <code>add-codex-session-cache-and-usage</code> 实现；包版本字段 <code>0.2.0</code>。采集时实际 <code>client_version</code> 查询参数与 User-Agent 版本仍为 <code>0.1.0</code>，这是配置中的独立字段，不能从包版本推导。</li>
+<li>请求模型和三轮响应的 <code>model</code> 字段均为 <strong><code>gpt-5.5</code></strong>。该字段是服务端返回的模型标识，不是对后端模型内部实现的独立鉴定。</li>
+<li>实际访问域名：<code>chatgpt.com</code>；WebSocket 握手 <strong>101</strong>，SSE 请求 <strong>200</strong>。</li>
+<li>业务案例是<strong>演示报价</strong>：真实模型推理 + 本地 Decimal 工具运算；价格是明确标记的演示数据，不涉及真实订单、支付或外部查询。</li>
+<li>本文中“实测”指这一次同步 Responses 案例；Chat 投影、异步、断流恢复和并发清理仍由离线测试覆盖，本次未对这些场景重复调用真实服务。</li>
+</ul>
+<p>完整记录：</p>
+<ul>
+<li><a href="../../artifacts/protocol-case-20260912-run2/manifest.json">运行清单与源码 SHA-256</a></li>
+<li><a href="../../artifacts/protocol-case-20260912-run2/trace.jsonl">按序号排列的完整脱敏轨迹</a></li>
+<li><a href="../../artifacts/protocol-case-20260912-run2/summary.json">三轮统计</a></li>
+<li><a href="../../artifacts/protocol-case-20260912-run2/turn-1-request.json">第一轮请求</a> / <a href="../../artifacts/protocol-case-20260912-run2/turn-1-response.json">响应</a></li>
+<li><a href="../../artifacts/protocol-case-20260912-run2/turn-2-request.json">第二轮请求</a> / <a href="../../artifacts/protocol-case-20260912-run2/turn-2-response.json">响应</a></li>
+<li><a href="../../artifacts/protocol-case-20260912-run2/turn-3-request.json">第三轮请求</a> / <a href="../../artifacts/protocol-case-20260912-run2/turn-3-response.json">响应</a></li>
+</ul>
+<p>认证 token、账户 ID、账户配额和不透明路由状态已脱敏；加密推理字段若存在，以长度和摘要替代。本次没有返回 reasoning item，不能据此宣称验证了加密推理的真实回放。</p>
+<p>这是应用层采集：WebSocket 的 JSON 数据在 send/recv 边界记录，HTTPX 记录请求 body 与已消费的 SSE 字节。<strong>不是 TCP/TLS 抓包</strong>，字节统计不含 TLS、HTTP 头或 WebSocket 帧开销；握手请求只记录 SDK 显式提供的头，不包括库自动生成的 Upgrade/Sec-WebSocket 头。</p>
+<p>展示的 JSON 经脱敏和重新排版，不应拿排版后的文本去验证原始字节数。轨迹中的 bytes/sha256 在脱敏前对应用层数据计算；运行清单中的 trace_sha256 则针对最终交付的脱敏 JSONL。</p>
+<p>首次采集因记录器将带重复 Set-Cookie 的响应头转换成 dict 而失败，未发出生成帧；<a href="../../artifacts/protocol-case-20260912/manifest.json">失败清单</a>单独保留，未混入成功案例的性能数据。</p>
+<h2 id="2-sdk">2. SDK 层与线上协议的对应关系</h2>
+<pre><code class="language-text">Responses.create / parse               Chat.completions.create
+        │                                      │
+        │                           Chat messages → Responses items
+        └──────────────────┬───────────────────┘
+                           ▼
+                   完整请求快照
+                           │
+             ┌─────────────┴─────────────┐
+             ▼                           ▼
+        HTTP POST + SSE           WebSocket response.create
+          完整 input              可用时 ID + 新增 input
+             └─────────────┬─────────────┘
+                           ▼
+              JSON 事件 → ResponseState
+                           │
+              Response / Usage / Chat 投影
+</code></pre>
+<p><code>stream=False</code> 只是 SDK 聚合结果的接口选择：后端请求仍带 <code>stream:true</code>，SDK 消费到终态后返回 Response；<code>stream=True</code> 则将事件交给调用方。本次三个调用都使用 stream=True 以记录事件。</p>
+<h3 id="21">2.1 请求参数映射</h3>
+<table>
+<thead>
+<tr>
+<th>SDK 参数</th>
+<th>请求体 / 行为</th>
+<th>本次值或边界</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>model</td>
+<td><code>model</code></td>
+<td>gpt-5.5</td>
+</tr>
+<tr>
+<td>input</td>
+<td><code>input</code> 数组；字符串先转为 user message</td>
+<td>完整历史由调用者提交</td>
+</tr>
+<tr>
+<td>instructions</td>
+<td>顶层 <code>instructions</code></td>
+<td>三轮完全相同</td>
+</tr>
+<tr>
+<td>tools</td>
+<td>顶层 <code>tools</code></td>
+<td>function 工具定义</td>
+</tr>
+<tr>
+<td>tool_choice</td>
+<td>顶层 <code>tool_choice</code></td>
+<td>auto</td>
+</tr>
+<tr>
+<td>parallel_tool_calls</td>
+<td>同名布尔字段</td>
+<td>false，未开启并行工具调用</td>
+</tr>
+<tr>
+<td>reasoning</td>
+<td>顶层 <code>reasoning</code></td>
+<td>请求仅发送 effort=low</td>
+</tr>
+<tr>
+<td>text</td>
+<td>顶层 <code>text</code></td>
+<td>本次未指定；响应显示服务端默认</td>
+</tr>
+<tr>
+<td>include</td>
+<td>顶层 <code>include</code></td>
+<td>preserve_context 合并 encrypted_content 请求</td>
+</tr>
+<tr>
+<td>preserve_context</td>
+<td>本地控制，无同名 wire 字段</td>
+<td>true；不保证必然返回 reasoning</td>
+</tr>
+<tr>
+<td>session_id</td>
+<td>内部索引与会话头</td>
+<td>无同名 body 字段</td>
+</tr>
+<tr>
+<td>prompt_cache_key</td>
+<td>顶层 <code>prompt_cache_key</code></td>
+<td>本次显式等于 session_id</td>
+</tr>
+<tr>
+<td>transport</td>
+<td>本地选择 SSE/WS</td>
+<td>不发送 transport 字段</td>
+</tr>
+<tr>
+<td>previous_response_id</td>
+<td>手动指定时透传；自动增量时内部加入</td>
+<td>第二轮由 SDK 加入</td>
+</tr>
+<tr>
+<td>timeout</td>
+<td>I/O 等待配置</td>
+<td>本次 60 秒，不发送到 body</td>
+</tr>
+<tr>
+<td>store</td>
+<td>SDK 固定写入 false</td>
+<td>三轮返回也为 false</td>
+</tr>
+</tbody>
+</table>
+<p>未指定缓存 key 时从 session_id 派生；长 session 标识使用 SHA-256，显式 key 超过 64 Unicode 字符会拒绝。建议会话 ID 使用 ASCII，以兼容 HTTP 请求头。完整规则见 <a href="../responses/">Responses 接口</a>。</p>
+<h3 id="22">2.2 认证与会话头</h3>
+<p>实际 WebSocket 地址：</p>
+<pre><code class="language-text">wss://chatgpt.com/backend-api/codex/responses?client_version=0.1.0
+</code></pre>
+<p>实际 SDK 提供的握手请求头（脱敏）：</p>
+<pre><code class="language-json">{
+  &quot;authorization&quot;: &quot;&lt;redacted&gt;&quot;,
+  &quot;user-agent&quot;: &quot;gpt-codex-client/0.1.0&quot;,
+  &quot;originator&quot;: &quot;gpt-codex-client&quot;,
+  &quot;chatgpt-account-id&quot;: &quot;&lt;redacted&gt;&quot;,
+  &quot;session-id&quot;: &quot;protocol-case-d808093affd3443b8ec3d200a5d2fa31&quot;,
+  &quot;x-client-request-id&quot;: &quot;protocol-case-d808093affd3443b8ec3d200a5d2fa31&quot;
+}
+</code></pre>
+<p>握手成功状态为 101。当前 WS 适配器删除 SSE 的 accept、content-type、openai-beta；本次未发送 OpenAI-Beta 也成功连接，这仅证明此端点在本次运行中接受该请求，不能泛化为所有 Responses 服务都不需要版本头。</p>
+<p>SSE 使用同一后端路径的 HTTPS POST，实际请求头如下：</p>
+<pre><code class="language-json">{
+  &quot;authorization&quot;: &quot;&lt;redacted&gt;&quot;,
+  &quot;content-type&quot;: &quot;application/json&quot;,
+  &quot;accept&quot;: &quot;application/json&quot;,
+  &quot;user-agent&quot;: &quot;gpt-codex-client/0.1.0&quot;,
+  &quot;openai-beta&quot;: &quot;responses=v1&quot;,
+  &quot;originator&quot;: &quot;gpt-codex-client&quot;,
+  &quot;chatgpt-account-id&quot;: &quot;&lt;redacted&gt;&quot;,
+  &quot;session-id&quot;: &quot;protocol-case-d808093affd3443b8ec3d200a5d2fa31&quot;,
+  &quot;x-client-request-id&quot;: &quot;protocol-case-d808093affd3443b8ec3d200a5d2fa31&quot;
+}
+</code></pre>
+<p>特别注意实际 <code>accept</code> 是 application/json，但 body 中 stream=true，响应内容确实是 SSE；不要将文档示例惯用的 <code>accept: text/event-stream</code> 冒充本次发送值。采集到的白名单响应头未包含 Content-Type，本次依据实际 event/data 帧识别 SSE。</p>
+<p>session-id 标识会话，prompt_cache_key 标识缓存路由意图，previous_response_id 标识要续接的响应，三者职责不同。工具 call_id 则用于把工具结果关联到模型发出的工具调用。</p>
+<h2 id="3">3. 真实案例：模型请求工具，本地计算，再回传结果</h2>
+<p>目标是计算：129.50 × 2 × (1 − 0.1) = <strong>233.10 元</strong>。</p>
+<pre><code class="language-text">应用                 同一条 WS 连接                 Codex
+ │  第一轮：完整 user + 工具定义 ─────────────────────▶│
+ │◀──────── function_call(calculate_quote, arguments) │
+ │                                                    │
+ │  本地 Decimal 运算，生成 function_call_output       │
+ │                                                    │
+ │  第二轮：resp_1 + 仅工具结果 ──────────────────────▶│
+ │◀────────────── 中文报价说明，终态 completed         │
+ │                                                    │
+ │  第三轮：新 HTTPS POST，完整历史 + 追加问题 ────────▶│
+ │◀───────────────── SSE：“233.10 元”                 │
+</code></pre>
+<p>第三轮是显式指定 SSE 的同一案例延续，<strong>不是 WS 失败后的自动回退</strong>。</p>
+<h3 id="31-websocket">3.1 第一轮：完整 WebSocket 请求</h3>
+<p>轨迹 seq=4；以下为完整 JSON payload（仅格式化），应用层 JSON 为 <strong>1,303 字节</strong>：</p>
+<pre><code class="language-json">{
+  &quot;type&quot;: &quot;response.create&quot;,
+  &quot;model&quot;: &quot;gpt-5.5&quot;,
+  &quot;input&quot;: [
+    {
+      &quot;role&quot;: &quot;user&quot;,
+      &quot;content&quot;: &quot;演示报价：单价129.50元，数量2，折扣率10%。请调用calculate_quote计算折后总额，然后说明计算结果。&quot;
+    }
+  ],
+  &quot;stream&quot;: true,
+  &quot;store&quot;: false,
+  &quot;instructions&quot;: &quot;You are a quote assistant in a synthetic protocol demonstration. Use calculate_quote exactly once when no tool result exists. After a tool result, answer briefly in Chinese using that result; do not call tools again unless asked to calculate new numbers. Do not invent prices or claim real purchases.&quot;,
+  &quot;tool_choice&quot;: &quot;auto&quot;,
+  &quot;parallel_tool_calls&quot;: false,
+  &quot;include&quot;: [
+    &quot;reasoning.encrypted_content&quot;
+  ],
+  &quot;prompt_cache_key&quot;: &quot;protocol-case-d808093affd3443b8ec3d200a5d2fa31&quot;,
+  &quot;tools&quot;: [
+    {
+      &quot;type&quot;: &quot;function&quot;,
+      &quot;name&quot;: &quot;calculate_quote&quot;,
+      &quot;description&quot;: &quot;Compute a demo quote from the supplied numeric inputs. All prices are demonstration data.&quot;,
+      &quot;parameters&quot;: {
+        &quot;type&quot;: &quot;object&quot;,
+        &quot;properties&quot;: {
+          &quot;unit_price&quot;: {
+            &quot;type&quot;: &quot;number&quot;
+          },
+          &quot;quantity&quot;: {
+            &quot;type&quot;: &quot;integer&quot;
+          },
+          &quot;discount_rate&quot;: {
+            &quot;type&quot;: &quot;number&quot;
+          }
+        },
+        &quot;required&quot;: [
+          &quot;unit_price&quot;,
+          &quot;quantity&quot;,
+          &quot;discount_rate&quot;
+        ],
+        &quot;additionalProperties&quot;: false
+      },
+      &quot;strict&quot;: true
+    }
+  ],
+  &quot;reasoning&quot;: {
+    &quot;effort&quot;: &quot;low&quot;
+  }
+}
+</code></pre>
+<p>这里 <code>type:response.create</code> 是 WS 消息信封。工具的 strict=true 和 additionalProperties=false 随定义发送；模型只输出调用请求，SDK 不执行工具。</p>
+<p>第一轮没有可见回答文本，这不是空响应错误：它成功输出了一次 function_call。完整终态保存在附件，以下抽取其身份、状态、output 和标准 usage，省略的 attribution 可在原记录查看：</p>
+<pre><code class="language-json">{
+  &quot;id&quot;: &quot;resp_0861e76844c4855e016aa5680981dc87d0bada30cb61ae3463&quot;,
+  &quot;model&quot;: &quot;gpt-5.5&quot;,
+  &quot;status&quot;: &quot;completed&quot;,
+  &quot;store&quot;: false,
+  &quot;previous_response_id&quot;: null,
+  &quot;output&quot;: [],
+  &quot;usage&quot;: {
+    &quot;input_tokens&quot;: 233,
+    &quot;input_tokens_details&quot;: {
+      &quot;cache_write_tokens&quot;: 0,
+      &quot;cached_tokens&quot;: 0
+    },
+    &quot;output_tokens&quot;: 32,
+    &quot;output_tokens_details&quot;: {
+      &quot;reasoning_tokens&quot;: 0
+    },
+    &quot;total_tokens&quot;: 265
+  }
+}
+</code></pre>
+<p><strong>实际终态 output 是空数组。</strong> 工具调用在此前 seq=56 的 output_item.done 中完成：</p>
+<pre><code class="language-json">{
+  &quot;type&quot;: &quot;response.output_item.done&quot;,
+  &quot;item&quot;: {
+    &quot;id&quot;: &quot;fc_0861e76844c4855e016aa5680aeb9487d09c02ec403abfc007&quot;,
+    &quot;type&quot;: &quot;function_call&quot;,
+    &quot;status&quot;: &quot;completed&quot;,
+    &quot;arguments&quot;: &quot;{\&quot;unit_price\&quot;:129.5,\&quot;quantity\&quot;:2,\&quot;discount_rate\&quot;:0.1}&quot;,
+    &quot;call_id&quot;: &quot;call_guVJLZrBpwwdl78P7aWmDL82&quot;,
+    &quot;name&quot;: &quot;calculate_quote&quot;
+  },
+  &quot;output_index&quot;: 0,
+  &quot;sequence_number&quot;: 23
+}
+</code></pre>
+<p>SDK 从该事件保留完整 item，再与终态元数据及 usage 合并。不能只读取最后一个事件的 output 来判断有没有工具调用。</p>
+<p>三个 ID 不可混用：</p>
+<ul>
+<li><code>response.id</code>：下一轮 previous_response_id 的值。</li>
+<li><code>output[].id</code>（fc_...）：这个协议输出项的 ID，用于事件定位和原始回放。</li>
+<li><code>output[].call_id</code>（call_...）：应用提交 function_call_output 时必须保留的关联键。</li>
+</ul>
+<p>arguments 的类型是 <strong>JSON 字符串</strong>。应用验证 name、arguments schema 及预期输入后，才执行本地计算；不能把未结束的 delta 当成完整参数。</p>
+<h3 id="32">3.2 实际工具参数流</h3>
+<p>第一轮共 28 个事件，其中 function_call_arguments.delta 为 19 个。下面直接抽取前 5 个参数片段和最终 done 事件：</p>
+<pre><code class="language-json">[
+  {
+    &quot;type&quot;: &quot;response.function_call_arguments.delta&quot;,
+    &quot;delta&quot;: &quot;{\&quot;&quot;,
+    &quot;item_id&quot;: &quot;fc_0861e76844c4855e016aa5680aeb9487d09c02ec403abfc007&quot;,
+    &quot;obfuscation&quot;: &quot;TetS549JgzIPn4&quot;,
+    &quot;output_index&quot;: 0,
+    &quot;sequence_number&quot;: 3
+  },
+  {
+    &quot;type&quot;: &quot;response.function_call_arguments.delta&quot;,
+    &quot;delta&quot;: &quot;unit&quot;,
+    &quot;item_id&quot;: &quot;fc_0861e76844c4855e016aa5680aeb9487d09c02ec403abfc007&quot;,
+    &quot;obfuscation&quot;: &quot;Rr1Df2Zrq3uI&quot;,
+    &quot;output_index&quot;: 0,
+    &quot;sequence_number&quot;: 4
+  },
+  {
+    &quot;type&quot;: &quot;response.function_call_arguments.delta&quot;,
+    &quot;delta&quot;: &quot;_price&quot;,
+    &quot;item_id&quot;: &quot;fc_0861e76844c4855e016aa5680aeb9487d09c02ec403abfc007&quot;,
+    &quot;obfuscation&quot;: &quot;7ZdWC4pKss&quot;,
+    &quot;output_index&quot;: 0,
+    &quot;sequence_number&quot;: 5
+  },
+  {
+    &quot;type&quot;: &quot;response.function_call_arguments.delta&quot;,
+    &quot;delta&quot;: &quot;\&quot;:&quot;,
+    &quot;item_id&quot;: &quot;fc_0861e76844c4855e016aa5680aeb9487d09c02ec403abfc007&quot;,
+    &quot;obfuscation&quot;: &quot;bymmjLObWOGbKO&quot;,
+    &quot;output_index&quot;: 0,
+    &quot;sequence_number&quot;: 6
+  },
+  {
+    &quot;type&quot;: &quot;response.function_call_arguments.delta&quot;,
+    &quot;delta&quot;: &quot;129&quot;,
+    &quot;item_id&quot;: &quot;fc_0861e76844c4855e016aa5680aeb9487d09c02ec403abfc007&quot;,
+    &quot;obfuscation&quot;: &quot;bSNws000twnuY&quot;,
+    &quot;output_index&quot;: 0,
+    &quot;sequence_number&quot;: 7
+  }
+]
+</code></pre>
+<pre><code class="language-json">{
+  &quot;type&quot;: &quot;response.function_call_arguments.done&quot;,
+  &quot;arguments&quot;: &quot;{\&quot;unit_price\&quot;:129.5,\&quot;quantity\&quot;:2,\&quot;discount_rate\&quot;:0.1}&quot;,
+  &quot;item_id&quot;: &quot;fc_0861e76844c4855e016aa5680aeb9487d09c02ec403abfc007&quot;,
+  &quot;output_index&quot;: 0,
+  &quot;sequence_number&quot;: 22
+}
+</code></pre>
+<p>delta 是增量文本，不是独立 JSON。应在同一输出项上按顺序拼接；done 携带完整字符串，不能再把它追加一遍。现有 SDK 使用归约器处理这一边界。</p>
+<h3 id="33">3.3 本地工具结果</h3>
+<p>轨迹 seq=61，工具由采集脚本中的 Decimal 运算执行，结果如下。这是本地计算输出，不是模型自行生成的报价依据：</p>
+<pre><code class="language-json">{
+  &quot;type&quot;: &quot;function_call_output&quot;,
+  &quot;call_id&quot;: &quot;call_guVJLZrBpwwdl78P7aWmDL82&quot;,
+  &quot;output&quot;: &quot;{\&quot;currency\&quot;: \&quot;CNY\&quot;, \&quot;subtotal\&quot;: \&quot;259.00\&quot;, \&quot;discount_amount\&quot;: \&quot;25.90\&quot;, \&quot;total\&quot;: \&quot;233.10\&quot;, \&quot;demo_data\&quot;: true}&quot;
+}
+</code></pre>
+<p><code>function_call_output.output</code> 同样是字符串；本例里面装 JSON。SDK 调用方此时维护的完整历史为：</p>
+<pre><code class="language-text">input[0]：原用户消息
+input[1]：第一轮完整 function_call 输出项
+input[2]：本地 function_call_output
+</code></pre>
+<h3 id="34">3.4 第二轮：自动增量续接</h3>
+<p>轨迹 seq=62 记录了 SDK 接收的完整请求，seq=63 记录实际发送数据。第二轮没有再次握手，仍为 connection=1。</p>
+<p>下面是实际第二轮请求中的关键字段，其余 tools、instructions、reasoning、include 等仍完整发送且与第一轮一致；完整请求见附件：</p>
+<pre><code class="language-json">{
+  &quot;type&quot;: &quot;response.create&quot;,
+  &quot;model&quot;: &quot;gpt-5.5&quot;,
+  &quot;store&quot;: false,
+  &quot;stream&quot;: true,
+  &quot;previous_response_id&quot;: &quot;resp_0861e76844c4855e016aa5680981dc87d0bada30cb61ae3463&quot;,
+  &quot;prompt_cache_key&quot;: &quot;protocol-case-d808093affd3443b8ec3d200a5d2fa31&quot;,
+  &quot;input&quot;: [
+    {
+      &quot;type&quot;: &quot;function_call_output&quot;,
+      &quot;call_id&quot;: &quot;call_guVJLZrBpwwdl78P7aWmDL82&quot;,
+      &quot;output&quot;: &quot;{\&quot;currency\&quot;: \&quot;CNY\&quot;, \&quot;subtotal\&quot;: \&quot;259.00\&quot;, \&quot;discount_amount\&quot;: \&quot;25.90\&quot;, \&quot;total\&quot;: \&quot;233.10\&quot;, \&quot;demo_data\&quot;: true}&quot;
+    }
+  ]
+}
+</code></pre>
+<p>增量规划依据为：</p>
+<pre><code class="language-text">上一轮 input + 上一轮 output
+= 原用户消息 + function_call
+= 当前完整 input 的前 2 项
+
+因此只发送第 3 项：function_call_output。
+</code></pre>
+<p>注意：SDK 没有省略 instructions/tools，也没有发送整份历史的哈希让服务端猜测内容。它只把 input 的匹配前缀换成 previous_response_id。</p>
+<p>第二轮实际结果：</p>
+<pre><code class="language-json">{
+  &quot;id&quot;: &quot;resp_0861e76844c4855e016aa5680c8d8087d0a35f5ad4de996a28&quot;,
+  &quot;model&quot;: &quot;gpt-5.5&quot;,
+  &quot;status&quot;: &quot;completed&quot;,
+  &quot;store&quot;: false,
+  &quot;previous_response_id&quot;: &quot;resp_0861e76844c4855e016aa5680981dc87d0bada30cb61ae3463&quot;,
+  &quot;output&quot;: [],
+  &quot;usage&quot;: {
+    &quot;input_tokens&quot;: 314,
+    &quot;input_tokens_details&quot;: {
+      &quot;cache_write_tokens&quot;: 0,
+      &quot;cached_tokens&quot;: 0
+    },
+    &quot;output_tokens&quot;: 53,
+    &quot;output_tokens_details&quot;: {
+      &quot;reasoning_tokens&quot;: 0
+    },
+    &quot;total_tokens&quot;: 367
+  }
+}
+</code></pre>
+<p>第二轮实际的完整消息项在 seq=175，终态帧的 output 同样为空：</p>
+<pre><code class="language-json">{
+  &quot;type&quot;: &quot;response.output_item.done&quot;,
+  &quot;item&quot;: {
+    &quot;id&quot;: &quot;msg_0861e76844c4855e016aa5680da65c87d0bc12eb2bb162939a&quot;,
+    &quot;type&quot;: &quot;message&quot;,
+    &quot;status&quot;: &quot;completed&quot;,
+    &quot;content&quot;: [
+      {
+        &quot;type&quot;: &quot;output_text&quot;,
+        &quot;annotations&quot;: [],
+        &quot;logprobs&quot;: [],
+        &quot;text&quot;: &quot;演示报价结果如下：\n\n- 小计：259.00 元\n- 折扣金额：25.90 元\n- 折后总额：233.10 元\n\n以上为演示数据，非真实购买价格。&quot;
+      }
+    ],
+    &quot;phase&quot;: &quot;final_answer&quot;,
+    &quot;role&quot;: &quot;assistant&quot;
+  },
+  &quot;output_index&quot;: 0,
+  &quot;sequence_number&quot;: 53
+}
+</code></pre>
+<p>输出保留 <code>phase:final_answer</code>、role、annotations 等字段。应用继续回放时应使用 to_input_items()，不要只取 output_text 重造 assistant message，否则严格前缀匹配可能失败。</p>
+<p>第二轮共 58 个事件，其中 output_text.delta 为 47 个；SDK 的 output_text 是这些文本最终的完整表示，不包括加密推理或工具元数据。</p>
+<h3 id="35-sse">3.5 第三轮：SSE 全量回放</h3>
+<p>轨迹 seq=181 的请求为 HTTPS POST，实际 body 为 <strong>2,067 字节</strong>，input 包含 5 项：原用户消息、工具调用、工具结果、第二轮 assistant 回答和追加问题。没有 previous_response_id，也没有顶层 type:response.create。完整 JSON 见<a href="../../artifacts/protocol-case-20260912-run2/turn-3-request.json">第三轮请求附件</a>。</p>
+<p>实际追加问题是：</p>
+<blockquote>
+<p>请根据已有工具结果，只输出折后总额，不重新调用工具。</p>
+</blockquote>
+<p>SSE 使用空行划分事件，原始已消费响应片段是这种结构（以下选取实际终态字段，完整帧见 trace seq=194）：</p>
+<pre><code class="language-text">event: response.completed
+data: { ...实际终态 JSON，见下方... }
+
+</code></pre>
+<pre><code class="language-json">{
+  &quot;id&quot;: &quot;resp_0861e76844c4855e016aa56811c22887d0a33cb34af47db569&quot;,
+  &quot;model&quot;: &quot;gpt-5.5&quot;,
+  &quot;status&quot;: &quot;completed&quot;,
+  &quot;store&quot;: false,
+  &quot;previous_response_id&quot;: null,
+  &quot;output&quot;: [],
+  &quot;usage&quot;: {
+    &quot;input_tokens&quot;: 389,
+    &quot;input_tokens_details&quot;: {
+      &quot;cache_write_tokens&quot;: 0,
+      &quot;cached_tokens&quot;: 0
+    },
+    &quot;output_tokens&quot;: 8,
+    &quot;output_tokens_details&quot;: {
+      &quot;reasoning_tokens&quot;: 0
+    },
+    &quot;total_tokens&quot;: 397
+  }
+}
+</code></pre>
+<p>第三轮文本实际位于 seq=193 的消息项中：</p>
+<pre><code class="language-json">{
+  &quot;type&quot;: &quot;response.output_item.done&quot;,
+  &quot;item&quot;: {
+    &quot;id&quot;: &quot;msg_0861e76844c4855e016aa56812a56087d09680420f49c57864&quot;,
+    &quot;type&quot;: &quot;message&quot;,
+    &quot;status&quot;: &quot;completed&quot;,
+    &quot;content&quot;: [
+      {
+        &quot;type&quot;: &quot;output_text&quot;,
+        &quot;annotations&quot;: [],
+        &quot;logprobs&quot;: [],
+        &quot;text&quot;: &quot;233.10 元&quot;
+      }
+    ],
+    &quot;phase&quot;: &quot;final_answer&quot;,
+    &quot;role&quot;: &quot;assistant&quot;
+  },
+  &quot;output_index&quot;: 0,
+  &quot;sequence_number&quot;: 10
+}
+</code></pre>
+<p>第三轮共 12 个事件，output_text.delta 为 4 个。读取终态后 SDK 即关闭 HTTP 响应，不等待 [DONE] 或 EOF。采集到的已消费 SSE body 为 <strong>9,919 字节</strong>；这不代表服务端原本打算发送的所有尾部字节。</p>
+<p>本次 WS 通过 json.dumps 默认 ASCII 转义序列化，HTTPX 的 JSON body 使用不同的紧凑/UTF-8 序列化方式。因此不能直接把第三轮 SSE 的 2,067 字节与假设 WS 全量的 2,492 字节解释为协议本身节省的字节。</p>
+<h2 id="4">4. 服务端事件契约</h2>
+<table>
+<thead>
+<tr>
+<th>事件</th>
+<th>本次观察</th>
+<th>SDK 行为</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>codex.rate_limits</td>
+<td>WS 每轮各 1 次</td>
+<td>原样透传；交付记录隐去账户配额，不作为 token usage</td>
+</tr>
+<tr>
+<td>codex.response.metadata</td>
+<td>WS 每轮各 1 次</td>
+<td>原样透传；本次包含 x-models-etag、x-codex-turn-state，后者脱敏</td>
+</tr>
+<tr>
+<td>response.created / response.in_progress</td>
+<td>三轮均出现</td>
+<td>更新 response 元数据，非终态</td>
+</tr>
+<tr>
+<td>response.output_item.added</td>
+<td>三轮均出现</td>
+<td>按输出索引或 item_id 建立输出项</td>
+</tr>
+<tr>
+<td>response.function_call_arguments.delta / done</td>
+<td>第一轮</td>
+<td>累积参数并接受完整 done 值</td>
+</tr>
+<tr>
+<td>response.content_part.added / done</td>
+<td>第二、三轮</td>
+<td>作为合法协议事件透传，原始内容在终态保留</td>
+</tr>
+<tr>
+<td>response.output_text.delta / done</td>
+<td>第二、三轮</td>
+<td>累积文字，避免 done 重复拼接</td>
+</tr>
+<tr>
+<td>response.output_item.done</td>
+<td>三轮</td>
+<td>保留完整工具/消息项和未知字段</td>
+</tr>
+<tr>
+<td>responsesapi.websocket_timing</td>
+<td>WS 每轮各 1 次</td>
+<td>透传诊断字段，不能替代 usage 或客户端时间</td>
+</tr>
+<tr>
+<td>response.completed</td>
+<td>三轮均出现</td>
+<td>终态成功；释放资源后交付最后事件</td>
+</tr>
+<tr>
+<td>response.incomplete / response.failed / error</td>
+<td>本次未出现</td>
+<td>按已有终态/异常契约处理；仅离线覆盖</td>
+</tr>
+</tbody>
+</table>
+<h3 id="41-sdk">4.1 原始终态与 SDK 聚合结果必须分开</h3>
+<p>本次三轮 completed 的原始 response.output 都是 []。工具或消息项已在 output_item.done 返回，终态负责给出 status、usage 等元数据。ResponseState 不会用终态空数组抹掉已累积项。</p>
+<p>原始帧与归约结果对应如下：</p>
+<table>
+<thead>
+<tr>
+<th>轮次</th>
+<th style="text-align: right;">output_item.done 序号</th>
+<th style="text-align: right;">completed 序号</th>
+<th>原始终态 output</th>
+<th>SDK 聚合 output</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td style="text-align: right;">56</td>
+<td style="text-align: right;">60</td>
+<td>[]</td>
+<td>1 个 function_call</td>
+</tr>
+<tr>
+<td>2</td>
+<td style="text-align: right;">175</td>
+<td style="text-align: right;">179</td>
+<td>[]</td>
+<td>1 个 assistant message</td>
+</tr>
+<tr>
+<td>3</td>
+<td style="text-align: right;">193</td>
+<td style="text-align: right;">195</td>
+<td>[]</td>
+<td>1 个 assistant message</td>
+</tr>
+</tbody>
+</table>
+<p>附件另提供 <a href="../../artifacts/protocol-case-20260912-run2/turn-1-sdk-response.json">第一轮 SDK 结果</a>、<a href="../../artifacts/protocol-case-20260912-run2/turn-2-sdk-response.json">第二轮 SDK 结果</a>、<a href="../../artifacts/protocol-case-20260912-run2/turn-3-sdk-response.json">第三轮 SDK 结果</a>。它们由所记录事件通过同一版 ResponseState 离线归约得到，文件中明确标注 provenance，不冒充服务端原始 completed 帧；其 output_text 与真实调用时记录的 manifest 一致。</p>
+<p>这也是客户端流聚合的实际必要性：即使业务只需要最终答案，也必须完整消费并积累事件。</p>
+<p>所有未知但合法 JSON 事件不应被误判为完成。<code>[DONE]</code> 本身也不是有效成功终态。协议新增字段保存在 raw/data 中，类型化字段只投影已经明确支持的语义。</p>
+<p>本次 WebSocket 首个事件是 codex.rate_limits，<strong>不是首个可见文字 token</strong>。因此下节“首事件耗时”不能称为 TTFT。</p>
+<h2 id="5-token">5. 缓存、字节与 token：本次究竟优化了什么</h2>
+<h3 id="51">5.1 实测统计</h3>
+<table>
+<thead>
+<tr>
+<th>轮次</th>
+<th>传输</th>
+<th style="text-align: right;">完整 input 项数</th>
+<th style="text-align: right;">实发 input 项数</th>
+<th style="text-align: right;">请求 JSON 字节</th>
+<th style="text-align: right;">输入 token</th>
+<th style="text-align: right;">输出 token</th>
+<th>缓存读/写</th>
+<th style="text-align: right;">总 token</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>WebSocket</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1,303</td>
+<td style="text-align: right;">233</td>
+<td style="text-align: right;">32</td>
+<td>0 / 0</td>
+<td style="text-align: right;">265</td>
+</tr>
+<tr>
+<td>2</td>
+<td>同一 WebSocket</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1,335</td>
+<td style="text-align: right;">314</td>
+<td style="text-align: right;">53</td>
+<td>0 / 0</td>
+<td style="text-align: right;">367</td>
+</tr>
+<tr>
+<td>3</td>
+<td>SSE</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">2,067</td>
+<td style="text-align: right;">389</td>
+<td style="text-align: right;">8</td>
+<td>0 / 0</td>
+<td style="text-align: right;">397</td>
+</tr>
+</tbody>
+</table>
+<p>第二轮若使用同样的 WS JSON 序列化发送完整请求，载荷为 1,780 字节。实发 1,335 字节，差值 445 字节：</p>
+<pre><code class="language-text">(1780 - 1335) / 1780 = 25.00%
+</code></pre>
+<p>1,780 是同轮完整请求的本地等价序列化结果，不是另发一次对照请求测量所得。第二轮实发比第一轮大并不矛盾：工具结果与 response ID 本身也占空间。</p>
+<p>三轮累计服务端报告输入 936、输出 93、总 token 1,029，缓存读/写均为 0，reasoning_tokens 均为 0。<strong>服务端仍计算了续接上下文的输入 token；省略网络 input 不等于从计量中删除历史。</strong></p>
+<h3 id="52">5.2 时间口径</h3>
+<table>
+<thead>
+<tr>
+<th>轮次</th>
+<th style="text-align: right;">SDK 调用到首事件</th>
+<th style="text-align: right;">SDK 调用到完整结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td style="text-align: right;">1,863.909 ms</td>
+<td style="text-align: right;">4,242.359 ms</td>
+</tr>
+<tr>
+<td>2</td>
+<td style="text-align: right;">647.374 ms</td>
+<td style="text-align: right;">4,430.602 ms</td>
+</tr>
+<tr>
+<td>3</td>
+<td style="text-align: right;">1,938.511 ms</td>
+<td style="text-align: right;">2,562.535 ms</td>
+</tr>
+</tbody>
+</table>
+<p>计时使用客户端单调时钟，包含网络、流处理与采集记录开销；首轮还包含握手。各轮输入/输出及工作不同，不构成 SSE 对 WS 的受控性能对比。第二轮总耗时高于第一轮，也不能据此得出增量没有收益。</p>
+<h3 id="53-usage">5.3 Usage 映射</h3>
+<table>
+<thead>
+<tr>
+<th>SDK 字段</th>
+<th>实际响应路径</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>input_tokens</td>
+<td>usage.input_tokens</td>
+<td>服务端输入总量，不减 cached_tokens</td>
+</tr>
+<tr>
+<td>output_tokens</td>
+<td>usage.output_tokens</td>
+<td>服务端输出总量</td>
+</tr>
+<tr>
+<td>cached_tokens</td>
+<td>usage.input_tokens_details.cached_tokens</td>
+<td>缓存读取，本次明确为 0</td>
+</tr>
+<tr>
+<td>cache_write_tokens</td>
+<td>usage.input_tokens_details.cache_write_tokens</td>
+<td>缓存写入，本次明确为 0，不是缺失</td>
+</tr>
+<tr>
+<td>reasoning_tokens</td>
+<td>usage.output_tokens_details.reasoning_tokens</td>
+<td>本次明确为 0</td>
+</tr>
+<tr>
+<td>total_tokens</td>
+<td>usage.total_tokens</td>
+<td>服务端总量，不由 SDK 推算</td>
+</tr>
+</tbody>
+</table>
+<p>若字段缺失则为 None，而不是 0。Usage.raw 深拷贝保留全部原始 usage。此次真实响应还包含 <code>usage.attribution</code>，按 items、tools、instructions 分解 token，SDK 没有丢弃它。</p>
+<p>例如第二轮 attribution 中：tools=134、instructions=60、原用户项=37、旧 function_call=34、工具结果=47、新消息项输入=2，加和为 314。这是该次返回值的核算，不应假设所有模型都返回同一 attribution schema。</p>
+<h3 id="54">5.4 响应中的缓存字段不等于请求配置</h3>
+<p>第二轮还实际返回了这些字段：</p>
+<pre><code class="language-json">{
+  &quot;prompt_cache_retention&quot;: &quot;24h&quot;,
+  &quot;prompt_cache_options&quot;: {
+    &quot;comparison_response_id&quot;: &quot;resp_0861e76844c4855e016aa5680981dc87d0bada30cb61ae3463&quot;,
+    &quot;mode&quot;: &quot;implicit&quot;,
+    &quot;ttl&quot;: &quot;30m&quot;
+  },
+  &quot;prompt_cache_diagnostics&quot;: {
+    &quot;type&quot;: &quot;unavailable&quot;
+  }
+}
+</code></pre>
+<p>请求中只显式发送 prompt_cache_key，没有发送 prompt_cache_retention 或 prompt_cache_options。服务端返回的 retention=24h 与 options.ttl=30m 同时存在，但 diagnostics=unavailable；SDK 不解释二者优先级，也不据此保证实际保留时长或有缓存命中。</p>
+<p>另外，responsesapi.websocket_timing 中第一轮 engine_total_prompt_tokens_total=402，第二轮为 885，后者 num_engine_calls=2、timing_scope=logical_turn；这与当前响应 usage.input_tokens 的 233/314 口径不同。不要把诊断累计数当成当前请求可计量输入，也不要混合求和。</p>
+<p>官方资料说明提示词前缀匹配和连接内状态复用是不同机制，可参考 <a href="https://developers.openai.com/api/docs/guides/prompt-caching">Prompt caching</a> 与 <a href="https://developers.openai.com/api/docs/guides/websocket-mode">WebSocket mode</a>。这些公开 Responses 文档用于解释概念，不替代 ChatGPT Codex 私有后端的本次实测。这里没有发送额外长提示词来追求命中，也没有对未命中的具体原因作服务端无法证实的断言。</p>
+<h2 id="6">6. 错误、恢复与资源释放</h2>
+<p>以下为当前 SDK 实现与离线规格，本次成功案例没有触发这些错误，不应标记为真实服务验证：</p>
+<table>
+<thead>
+<tr>
+<th>情况</th>
+<th>SDK 契约</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>WS 连接失败、生成帧确定未发送</td>
+<td>auto 可回退 SSE；显式 websocket 报错</td>
+</tr>
+<tr>
+<td>HTTP 握手业务拒绝</td>
+<td>暴露 AuthError/APIError，不自动绕过</td>
+</tr>
+<tr>
+<td>发送结果不明、输出途中断流</td>
+<td>StreamError，保留部分结果，不自动重放</td>
+</tr>
+<tr>
+<td>自动增量明确 previous_response_not_found，且无生成输出</td>
+<td>最多一次新 WS 全量恢复</td>
+</tr>
+<tr>
+<td>手动 previous_response_id</td>
+<td>不进行自动规划，也不保证全量恢复</td>
+</tr>
+<tr>
+<td>incomplete</td>
+<td>Responses 可返回，默认不可 to_input_items 回放，也不建立续接</td>
+</tr>
+<tr>
+<td>流提前关闭或异步取消</td>
+<td>关闭连接、清理续接；取消继续传播</td>
+</tr>
+</tbody>
+</table>
+<p>会话缓存按客户端实例内 session_id 索引，默认 32 个持久条目、空闲 300 秒到期；超 55 分钟的连接在下次复用前更换。同 session busy 或容量全 busy 时，额外请求使用一次性全量连接。没有公开 Session 对象；不处理账户隔离或账户轮换策略。</p>
+<p><code>client.close_session(id)</code> / <code>await client.aclose_session(id)</code> 清理指定会话；<code>close()</code> / <code>aclose()</code> 清理所有 SDK 自有 WS，不关闭调用者提供的 httpx 客户端。过期任务与活动流同时被清理。此案例最后明确关闭了 connection=1（seq=196）。</p>
+<h2 id="7">7. 如何复现与检查证据</h2>
+<p>采集脚本位于仓库 <code>scripts/capture_protocol_case.py</code>。它仅在显式启动时调用真实服务，读取已有未过期 token，不触发自动登录，也不属于 pytest 默认测试。示例所有金额与业务文本都是演示输入。</p>
+<pre><code class="language-bash">uv sync --extra websocket
+uv run python scripts/capture_protocol_case.py   --model gpt-5.5   --output docs/artifacts/protocol-case-local-new
+</code></pre>
+<p>输出目录必须不存在，避免覆盖历史证据。再次运行会产生新的真实模型请求；响应文本、ID、usage、时间可能变化。成功案例的首轮 tool call、参数和 Decimal 计算都由脚本校验；工具结果固定依据实际参数计算而不是让模型随意声明。</p>
+<p>读取顺序建议：manifest → summary → 第二轮 request/response → trace。trace 中 <code>sdk.full_request</code> 是调用方完整请求，<code>ws.send</code>/<code>http.request</code> 是实际应用层发送载荷，<code>ws.recv</code> 是服务端 JSON 帧，<code>sdk.event</code> 是 SDK 交付事件，<code>local.tool_result</code> 是本地工具执行结果。同一 WS 响应会同时出现 ws.recv 和 sdk.event，统计时不能重复计数。</p>
+<h2 id="8">8. 本次验证结论与未验证项</h2>
+<p><strong>已实测：</strong> OAuth Codex 地址可达，gpt-5.5 接受该工具 schema；一条 WS 完成两轮；第二轮使用真实 previous_response_id + 单个工具结果成功续接；store=false 可用；SSE 完整历史回放成功；六个 usage 字段实际可读；输出项 phase、调用 ID 与服务端未知字段保留。</p>
+<p><strong>未实测：</strong> 缓存读取命中、加密 reasoning 回放、异步真实传输、Chat 真实投影、并发/过期/异常恢复真实服务路径、其他模型/账户/代理配置、稳定的延迟或费用收益。本次数据不能支持这些更广的结论。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u5df2\u590d\u5236", "clipboard.copy": "\u590d\u5236", "search.result.more.one": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.more.other": "\u5728\u8be5\u9875\u4e0a\u8fd8\u6709 # \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.none": "\u6ca1\u6709\u627e\u5230\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.one": "\u627e\u5230 1 \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.other": "# \u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u7ed3\u679c", "search.result.placeholder": "\u952e\u5165\u4ee5\u5f00\u59cb\u641c\u7d22", "search.result.term.missing": "\u7f3a\u5c11", "select.version": "\u9009\u62e9\u5f53\u524d\u7248\u672c"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

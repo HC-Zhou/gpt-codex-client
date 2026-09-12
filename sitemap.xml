@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+    <url>
+        <loc>https://hc-zhou.github.io/gpt-codex-client/</loc>
+        <lastmod>2026-09-12</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://hc-zhou.github.io/gpt-codex-client/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://hc-zhou.github.io/gpt-codex-client/zh/"/>
+    </url>
+    <url>
+        <loc>https://hc-zhou.github.io/gpt-codex-client/authentication/</loc>
+        <lastmod>2026-09-12</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://hc-zhou.github.io/gpt-codex-client/authentication/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://hc-zhou.github.io/gpt-codex-client/zh/authentication/"/>
+    </url>
+    <url>
+        <loc>https://hc-zhou.github.io/gpt-codex-client/chat-compatibility/</loc>
+        <lastmod>2026-09-12</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://hc-zhou.github.io/gpt-codex-client/chat-compatibility/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://hc-zhou.github.io/gpt-codex-client/zh/chat-compatibility/"/>
+    </url>
+    <url>
+        <loc>https://hc-zhou.github.io/gpt-codex-client/errors/</loc>
+        <lastmod>2026-09-12</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://hc-zhou.github.io/gpt-codex-client/errors/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://hc-zhou.github.io/gpt-codex-client/zh/errors/"/>
+    </url>
+    <url>
+        <loc>https://hc-zhou.github.io/gpt-codex-client/models/</loc>
+        <lastmod>2026-09-12</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://hc-zhou.github.io/gpt-codex-client/models/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://hc-zhou.github.io/gpt-codex-client/zh/models/"/>
+    </url>
+    <url>
+        <loc>https://hc-zhou.github.io/gpt-codex-client/protocol/</loc>
+        <lastmod>2026-09-12</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://hc-zhou.github.io/gpt-codex-client/protocol/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://hc-zhou.github.io/gpt-codex-client/zh/protocol/"/>
+    </url>
+    <url>
+        <loc>https://hc-zhou.github.io/gpt-codex-client/release/</loc>
+        <lastmod>2026-09-12</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://hc-zhou.github.io/gpt-codex-client/release/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://hc-zhou.github.io/gpt-codex-client/zh/release/"/>
+    </url>
+    <url>
+        <loc>https://hc-zhou.github.io/gpt-codex-client/responses/</loc>
+        <lastmod>2026-09-12</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://hc-zhou.github.io/gpt-codex-client/responses/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://hc-zhou.github.io/gpt-codex-client/zh/responses/"/>
+    </url>
+    <url>
+        <loc>https://hc-zhou.github.io/gpt-codex-client/streaming/</loc>
+        <lastmod>2026-09-12</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://hc-zhou.github.io/gpt-codex-client/streaming/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://hc-zhou.github.io/gpt-codex-client/zh/streaming/"/>
+    </url>
+    <url>
+        <loc>https://hc-zhou.github.io/gpt-codex-client/structured-output/</loc>
+        <lastmod>2026-09-12</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://hc-zhou.github.io/gpt-codex-client/structured-output/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://hc-zhou.github.io/gpt-codex-client/zh/structured-output/"/>
+    </url>
+    <url>
+        <loc>https://hc-zhou.github.io/gpt-codex-client/tool-calls/</loc>
+        <lastmod>2026-09-12</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="en" href="https://hc-zhou.github.io/gpt-codex-client/tool-calls/"/>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://hc-zhou.github.io/gpt-codex-client/zh/tool-calls/"/>
+    </url>
+    <url>
+        <loc>https://hc-zhou.github.io/gpt-codex-client/zh/</loc>
+        <lastmod>2026-09-12</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://hc-zhou.github.io/gpt-codex-client/zh/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://hc-zhou.github.io/gpt-codex-client/"/>
+    </url>
+    <url>
+        <loc>https://hc-zhou.github.io/gpt-codex-client/zh/authentication/</loc>
+        <lastmod>2026-09-12</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://hc-zhou.github.io/gpt-codex-client/zh/authentication/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://hc-zhou.github.io/gpt-codex-client/authentication/"/>
+    </url>
+    <url>
+        <loc>https://hc-zhou.github.io/gpt-codex-client/zh/chat-compatibility/</loc>
+        <lastmod>2026-09-12</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://hc-zhou.github.io/gpt-codex-client/zh/chat-compatibility/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://hc-zhou.github.io/gpt-codex-client/chat-compatibility/"/>
+    </url>
+    <url>
+        <loc>https://hc-zhou.github.io/gpt-codex-client/zh/errors/</loc>
+        <lastmod>2026-09-12</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://hc-zhou.github.io/gpt-codex-client/zh/errors/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://hc-zhou.github.io/gpt-codex-client/errors/"/>
+    </url>
+    <url>
+        <loc>https://hc-zhou.github.io/gpt-codex-client/zh/models/</loc>
+        <lastmod>2026-09-12</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://hc-zhou.github.io/gpt-codex-client/zh/models/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://hc-zhou.github.io/gpt-codex-client/models/"/>
+    </url>
+    <url>
+        <loc>https://hc-zhou.github.io/gpt-codex-client/zh/protocol/</loc>
+        <lastmod>2026-09-12</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://hc-zhou.github.io/gpt-codex-client/zh/protocol/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://hc-zhou.github.io/gpt-codex-client/protocol/"/>
+    </url>
+    <url>
+        <loc>https://hc-zhou.github.io/gpt-codex-client/zh/release/</loc>
+        <lastmod>2026-09-12</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://hc-zhou.github.io/gpt-codex-client/zh/release/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://hc-zhou.github.io/gpt-codex-client/release/"/>
+    </url>
+    <url>
+        <loc>https://hc-zhou.github.io/gpt-codex-client/zh/responses/</loc>
+        <lastmod>2026-09-12</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://hc-zhou.github.io/gpt-codex-client/zh/responses/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://hc-zhou.github.io/gpt-codex-client/responses/"/>
+    </url>
+    <url>
+        <loc>https://hc-zhou.github.io/gpt-codex-client/zh/streaming/</loc>
+        <lastmod>2026-09-12</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://hc-zhou.github.io/gpt-codex-client/zh/streaming/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://hc-zhou.github.io/gpt-codex-client/streaming/"/>
+    </url>
+    <url>
+        <loc>https://hc-zhou.github.io/gpt-codex-client/zh/structured-output/</loc>
+        <lastmod>2026-09-12</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://hc-zhou.github.io/gpt-codex-client/zh/structured-output/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://hc-zhou.github.io/gpt-codex-client/structured-output/"/>
+    </url>
+    <url>
+        <loc>https://hc-zhou.github.io/gpt-codex-client/zh/tool-calls/</loc>
+        <lastmod>2026-09-12</lastmod>
+        <changefreq>daily</changefreq>
+        <xhtml:link rel="alternate" hreflang="zh" href="https://hc-zhou.github.io/gpt-codex-client/zh/tool-calls/"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://hc-zhou.github.io/gpt-codex-client/tool-calls/"/>
+    </url>
+</urlset>

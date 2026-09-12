@@ -1,0 +1,155 @@
+{
+  "provenance": "Derived by offline replay of this turn recorded sdk.event payloads through the unchanged ResponseState; not a raw server terminal frame",
+  "turn": 1,
+  "output_text": "",
+  "response": {
+    "id": "resp_0861e76844c4855e016aa5680981dc87d0bada30cb61ae3463",
+    "object": "response",
+    "created_at": 1789224969,
+    "status": "completed",
+    "background": false,
+    "completed_at": 1789224971,
+    "error": null,
+    "frequency_penalty": 0.0,
+    "incomplete_details": null,
+    "instructions": "You are a quote assistant in a synthetic protocol demonstration. Use calculate_quote exactly once when no tool result exists. After a tool result, answer briefly in Chinese using that result; do not call tools again unless asked to calculate new numbers. Do not invent prices or claim real purchases.",
+    "max_output_tokens": null,
+    "max_tool_calls": null,
+    "model": "gpt-5.5",
+    "moderation": null,
+    "parallel_tool_calls": false,
+    "presence_penalty": 0.0,
+    "previous_response_id": null,
+    "prompt_cache_key": "protocol-case-d808093affd3443b8ec3d200a5d2fa31",
+    "prompt_cache_retention": "24h",
+    "reasoning": {
+      "context": "current_turn",
+      "effort": "low",
+      "mode": "standard",
+      "summary": null
+    },
+    "safety_identifier": "user-X6SzgDBuftQhx0H6EaJrxGi2",
+    "service_tier": "default",
+    "store": false,
+    "temperature": 1.0,
+    "text": {
+      "format": {
+        "type": "text"
+      },
+      "verbosity": "medium"
+    },
+    "tool_choice": "auto",
+    "tool_usage": {
+      "image_gen": {
+        "input_tokens": 0,
+        "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 0
+        },
+        "total_tokens": 0
+      },
+      "web_search": {
+        "num_requests": 0
+      }
+    },
+    "tools": [
+      {
+        "type": "function",
+        "description": "Compute a demo quote from the supplied numeric inputs. All prices are demonstration data.",
+        "name": "calculate_quote",
+        "output_schema": null,
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "unit_price": {
+              "type": "number"
+            },
+            "quantity": {
+              "type": "integer"
+            },
+            "discount_rate": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "unit_price",
+            "quantity",
+            "discount_rate"
+          ],
+          "additionalProperties": false
+        },
+        "strict": true
+      }
+    ],
+    "top_logprobs": 0,
+    "top_p": 0.98,
+    "truncation": "disabled",
+    "usage": {
+      "attribution": {
+        "items": {
+          "msg_0861e76844c4855e016aa56809930087d0b95ec545443e0d7d": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0,
+            "content": [
+              {
+                "cache_write_tokens": 0,
+                "cached_tokens": 0,
+                "input_tokens": 37,
+                "output_tokens": 0
+              }
+            ],
+            "input_tokens": 37,
+            "output_tokens": 0
+          },
+          "fc_0861e76844c4855e016aa5680aeb9487d09c02ec403abfc007": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0,
+            "input_tokens": 2,
+            "output_tokens": 32
+          }
+        },
+        "request_fields": {
+          "tools": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0,
+            "input_tokens": 134,
+            "output_tokens": 0
+          },
+          "instructions": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0,
+            "input_tokens": 60,
+            "output_tokens": 0
+          }
+        }
+      },
+      "input_tokens": 233,
+      "input_tokens_details": {
+        "cache_write_tokens": 0,
+        "cached_tokens": 0
+      },
+      "output_tokens": 32,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 265
+    },
+    "user": null,
+    "metadata": {},
+    "output": [
+      {
+        "id": "fc_0861e76844c4855e016aa5680aeb9487d09c02ec403abfc007",
+        "type": "function_call",
+        "status": "completed",
+        "arguments": "{\"unit_price\":129.5,\"quantity\":2,\"discount_rate\":0.1}",
+        "call_id": "call_guVJLZrBpwwdl78P7aWmDL82",
+        "name": "calculate_quote"
+      }
+    ]
+  }
+}

@@ -1,0 +1,1023 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="OpenAI SDK-style client for ChatGPT/Codex OAuth-backed Responses workflows.">
+      
+      
+      
+        <link rel="canonical" href="https://hc-zhou.github.io/gpt-codex-client/responses/">
+      
+      
+        <link rel="prev" href="../authentication/">
+      
+      
+        <link rel="next" href="../protocol/">
+      
+      
+        
+          <link rel="alternate" href="./" hreflang="en">
+        
+          <link rel="alternate" href="../zh/responses/" hreflang="zh">
+        
+      
+      
+      <link rel="icon" href="../assets/gpt-codex-client-v1.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Responses - gpt-codex-client</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#responses" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="gpt-codex-client" class="md-header__button md-logo" aria-label="gpt-codex-client" data-md-component="logo">
+      
+  <img src="../assets/gpt-codex-client-v1.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            gpt-codex-client
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Responses
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="Select language">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.5 17.5 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2zm-2.62 7 1.62-4.33L19.12 17z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="./" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="../zh/responses/" hreflang="zh" class="md-select__link">
+              简体中文
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/HC-Zhou/gpt-codex-client" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="gpt-codex-client" class="md-nav__button md-logo" aria-label="gpt-codex-client" data-md-component="logo">
+      
+  <img src="../assets/gpt-codex-client-v1.png" alt="logo">
+
+    </a>
+    gpt-codex-client
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/HC-Zhou/gpt-codex-client" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../authentication/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Authentication
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Responses
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Responses
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#native-output-replay" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Native output replay
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cache-identity-and-optional-websocket-transport" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cache identity and optional WebSocket transport
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Cache identity and optional WebSocket transport">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#resource-ownership" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resource ownership
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#typed-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Typed usage
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gpt-reasoning-effort" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GPT reasoning effort
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../protocol/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Protocol
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chat-compatibility/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Chat Compatibility
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../streaming/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Streaming
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../structured-output/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Structured Output
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tool-calls/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tool Calls
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../models/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Models
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../errors/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Errors
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../release/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Release
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#native-output-replay" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Native output replay
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cache-identity-and-optional-websocket-transport" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cache identity and optional WebSocket transport
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Cache identity and optional WebSocket transport">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#resource-ownership" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resource ownership
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#typed-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Typed usage
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gpt-reasoning-effort" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GPT reasoning effort
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="responses">Responses</h1>
+<pre><code class="language-python">from gpt_codex_client import CodexClient, FunctionTool, Reasoning
+
+response = CodexClient().responses.create(
+    model=&quot;gpt-5.5&quot;,
+    input=&quot;Find the answer.&quot;,
+    tools=[FunctionTool(name=&quot;lookup&quot;, parameters={&quot;type&quot;: &quot;object&quot;})],
+    reasoning=Reasoning(effort=&quot;medium&quot;),
+)
+</code></pre>
+<p>Use <code>client.models.list()</code> to discover model slugs in the public registry.
+Registry presence does not establish account access.</p>
+<h2 id="native-output-replay">Native output replay</h2>
+<pre><code class="language-python">history = [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Look up record 42&quot;}]
+response = client.responses.create(
+    model=&quot;model&quot;, input=history, tools=[FunctionTool(name=&quot;lookup&quot;)],
+    preserve_context=True,
+)
+history.extend(response.to_input_items())
+for item in response.output:
+    if item.get(&quot;type&quot;) == &quot;function_call&quot;:
+        # Validate and execute in your application; this is example output.
+        history.append({&quot;type&quot;: &quot;function_call_output&quot;, &quot;call_id&quot;: item[&quot;call_id&quot;],
+                        &quot;output&quot;: &quot;record 42: example result&quot;})
+next_response = client.responses.create(model=&quot;model&quot;, input=history)
+</code></pre>
+<p><code>to_input_items()</code> returns a deep copy of completed output in its original order,
+including reasoning, encrypted content, message phase, IDs and unknown fields.
+Mutating the copy does not change the response. Incomplete responses are rejected
+by this helper; inspect <code>output</code> and <code>raw</code> to decide explicitly how to proceed.
+Keep the source model with stored history. Native raw-input replay leaves model
+compatibility to the caller; Chat's versioned envelope validates the model itself.</p>
+<p><code>preserve_context=True</code> merges <code>reasoning.encrypted_content</code> into <code>include</code> without
+removing existing values. It defaults to False and is supported by <code>create</code> and
+<code>parse</code> on both clients. Encrypted context stays opaque and is excluded from
+<code>output_text</code>. Native output preserves tool types unsupported by Chat.</p>
+<p>These contracts have offline MockTransport coverage; no live Codex replay or
+account availability is established by the test suite.</p>
+<h2 id="cache-identity-and-optional-websocket-transport">Cache identity and optional WebSocket transport</h2>
+<p>Synchronous and asynchronous <code>responses.create</code>, <code>responses.parse</code>, and
+<code>chat.completions.create</code> accept these keyword arguments:</p>
+<table>
+<thead>
+<tr>
+<th>Argument</th>
+<th>Default</th>
+<th>Behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>session_id</code></td>
+<td><code>None</code></td>
+<td>Stable logical conversation identity; enables internal connection reuse on WebSocket calls.</td>
+</tr>
+<tr>
+<td><code>prompt_cache_key</code></td>
+<td><code>None</code></td>
+<td>Explicit cache identifier; otherwise derived from <code>session_id</code>.</td>
+</tr>
+<tr>
+<td><code>transport</code></td>
+<td><code>"sse"</code></td>
+<td><code>"sse"</code>, <code>"websocket"</code>, or <code>"auto"</code>.</td>
+</tr>
+</tbody>
+</table>
+<p>An explicit cache key must be non-blank and at most 64 Unicode characters. A
+session ID must be non-blank; IDs longer than 64 characters use a UTF-8 SHA-256
+hex digest for the wire identifier, while the complete ID indexes local state.
+Use ASCII session IDs for HTTP header compatibility. <code>session-id</code> and
+<code>x-client-request-id</code> headers use the session identifier even when a different
+cache key is supplied. These structured headers override custom headers without
+regard to case. With neither argument, the SDK generates neither identifier.
+Providing only a cache key does not create a persistent session. <code>None</code> means
+use the session default, not disable server-side caching. No retention duration
+or cache hit is guaranteed.</p>
+<p>Install the optional transport:</p>
+<pre><code class="language-bash">pip install 'gpt-codex-client[websocket]'
+</code></pre>
+<pre><code class="language-python">from gpt_codex_client import CodexClient
+
+history = [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Explain this function.&quot;}]
+with CodexClient(session_cache_max_size=32, session_cache_idle_timeout=300) as client:
+    response = client.responses.create(
+        model=&quot;your-model&quot;, input=history,
+        session_id=&quot;conversation-42&quot;, prompt_cache_key=&quot;project-context&quot;,
+        transport=&quot;websocket&quot;, preserve_context=True,
+    )
+    history.extend(response.to_input_items())
+    history.append({&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Now summarize it.&quot;})
+    followup = client.responses.create(
+        model=&quot;your-model&quot;, input=history,
+        session_id=&quot;conversation-42&quot;, prompt_cache_key=&quot;project-context&quot;,
+        transport=&quot;websocket&quot;, preserve_context=True,
+    )
+    if followup.usage is not None:
+        print(followup.usage.input_tokens, followup.usage.cached_tokens)
+    client.close_session(&quot;conversation-42&quot;)
+</code></pre>
+<p>Always supply the complete history. The SDK sends <code>previous_response_id</code> plus
+only the new items when the prior input and complete output are an exact prefix
+and other request fields match. Otherwise it sends full context. It never edits
+or automatically appends business history. For Chat, persist assistant messages
+with <code>message.to_dict()</code> and keep <code>provider_data</code>; streaming clients must retain
+the terminal delta's <code>provider_data</code>. Missing or edited context can prevent
+incremental requests. <code>preserve_context</code> remains opt-in.</p>
+<p>An explicitly supplied <code>previous_response_id</code> bypasses automatic planning and
+uses a one-shot WebSocket without updating cached context. Such calls have no
+SDK guarantee of full-history recovery. <code>store</code> remains <code>False</code> in all modes.</p>
+<p><code>websocket</code> exposes connection failures. <code>auto</code> falls back to SSE only before a
+generation frame was submitted, such as a missing optional dependency or failed
+connection. HTTP handshake rejections are surfaced. Ambiguous send failures and
+interrupted output aren't replayed. An automatically generated continuation
+rejected with <code>previous_response_not_found</code> before any generated output gets
+at most one fresh-WebSocket full-context recovery.</p>
+<h3 id="resource-ownership">Resource ownership</h3>
+<p>Connections and prior-response snapshots belong to the client, indexed by
+<code>session_id</code>; there is no public Session object. Default cache capacity is 32
+entries and idle timeout is 300 seconds. Capacity must be a non-negative integer
+(0 disables persistence); idle timeout must be finite and positive. Idle entries
+expire automatically and are evicted in LRU order when full. Connections older
+than 55 minutes are replaced before reuse. A busy session or a full cache with
+no idle entry uses a one-shot full-context connection; these temporary connections
+are outside the persistent cache limit. The application controls total concurrency.</p>
+<p><code>close_session(id)</code> / <code>await aclose_session(id)</code> clears the session's idle and
+active connections, including one-shot connections. Clearing an active session
+interrupts its stream. Repeated cleanup and unknown IDs are harmless.
+<code>close()</code> / <code>await aclose()</code> clears all SDK-owned WebSockets and expiry tasks,
+without closing a caller-supplied <code>httpx</code> client. Use an async client within one
+event loop. Closing a stream early or cancelling it discards its continuation;
+completed streams release their connection for reuse. Incomplete results are
+returned by Responses but aren't cached for continuation.</p>
+<p>WebSocket uses <code>websockets&gt;=15,&lt;16</code> independently of <code>httpx</code>. Its handshake and
+receive operations use the request timeout; the close handshake is bounded to
+five seconds. Environment/system proxy selection follows websockets, including
+its optional SOCKS dependency requirements. Custom HTTPX transports, proxy and
+TLS settings do not transfer to WebSocket. Keep <code>transport="sse"</code> when relying
+on those settings. Changing the endpoint invalidates old WebSocket connections.
+Account isolation and account rotation are outside this feature's scope.</p>
+<h2 id="typed-usage">Typed usage</h2>
+<p><code>Response.usage</code>, <code>ChatCompletion.usage</code>, and the terminal
+<code>ChatCompletionChunk.usage</code> expose a public <code>Usage</code> object. Access parsed results
+through <code>ParsedResponse.response.usage</code>. Intermediate Chat chunks have no usage.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Server source</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>input_tokens</code></td>
+<td><code>usage.input_tokens</code>, including cached input</td>
+</tr>
+<tr>
+<td><code>output_tokens</code></td>
+<td><code>usage.output_tokens</code></td>
+</tr>
+<tr>
+<td><code>cached_tokens</code></td>
+<td><code>usage.input_tokens_details.cached_tokens</code></td>
+</tr>
+<tr>
+<td><code>cache_write_tokens</code></td>
+<td><code>usage.input_tokens_details.cache_write_tokens</code></td>
+</tr>
+<tr>
+<td><code>reasoning_tokens</code></td>
+<td><code>usage.output_tokens_details.reasoning_tokens</code></td>
+</tr>
+<tr>
+<td><code>total_tokens</code></td>
+<td><code>usage.total_tokens</code></td>
+</tr>
+</tbody>
+</table>
+<p>Every counter is <code>int | None</code>: missing/null or malformed counters remain <code>None</code>,
+while explicit zero remains <code>0</code>. If the server omits usage entirely, <code>.usage</code> is
+<code>None</code>. Input totals are never reduced by cache counts, and total tokens aren't
+computed locally. <code>Usage.raw</code> retains a deep copy including unknown fields;
+<code>Response.raw</code> still retains the complete response. The SDK does not estimate
+prices or infer a cache hit from connection reuse or incremental transport.
+Automated regression tests verify these behaviors with offline mocks. A separate
+<a href="../protocol/">real protocol case</a> records synchronous WebSocket/SSE traffic; it
+does not establish prompt-cache hits or latency savings.</p>
+<h2 id="gpt-reasoning-effort">GPT reasoning effort</h2>
+<pre><code class="language-python">response = client.responses.create(
+    model=&quot;gpt-5.5&quot;,
+    input=&quot;Explain the trade-offs in this design.&quot;,
+    model_reasoning_effort=&quot;high&quot;,
+)
+</code></pre>
+<p><code>model_reasoning_effort</code> maps to the wire field <code>reasoning.effort</code>; it is not
+sent as a top-level protocol field. It works with sync/async Responses <code>create</code>,
+<code>parse</code>, streaming, and <code>chat.completions.create</code>. Existing <code>reasoning={"effort":
+"high", "summary": "auto"}</code> and Chat <code>reasoning_effort="high"</code> remain supported.
+Matching duplicate values are accepted; conflicting values raise <code>ValueError</code>
+before network I/O. Other reasoning options are preserved without mutating inputs.</p>
+<p>Omitting the option keeps the backend default. Non-empty strings are passed
+through without model-name filtering or a hard-coded capability list; supported
+levels depend on the model and backend. The <a href="https://developers.openai.com/codex/config-reference/">Codex configuration reference</a>
+documents <code>minimal</code>, <code>low</code>, <code>medium</code>, <code>high</code>, and model-dependent <code>xhigh</code>.
+This SDK does not read <code>model_reasoning_effort</code> from local Codex TOML automatically.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.sections", "content.code.copy"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

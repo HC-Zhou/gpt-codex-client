@@ -1,0 +1,59 @@
+{
+  "seq": 4,
+  "turn": 1,
+  "elapsed_ms": 1451.354,
+  "kind": "ws.send",
+  "connection": 1,
+  "bytes": 1303,
+  "sha256": "cacb11cc6872bd4a6a97b09a204b2941c5822859ecacfaa36ee7d70ca9bbe368",
+  "payload": {
+    "type": "response.create",
+    "model": "gpt-5.5",
+    "input": [
+      {
+        "role": "user",
+        "content": "演示报价：单价129.50元，数量2，折扣率10%。请调用calculate_quote计算折后总额，然后说明计算结果。"
+      }
+    ],
+    "stream": true,
+    "store": false,
+    "instructions": "You are a quote assistant in a synthetic protocol demonstration. Use calculate_quote exactly once when no tool result exists. After a tool result, answer briefly in Chinese using that result; do not call tools again unless asked to calculate new numbers. Do not invent prices or claim real purchases.",
+    "tool_choice": "auto",
+    "parallel_tool_calls": false,
+    "include": [
+      "reasoning.encrypted_content"
+    ],
+    "prompt_cache_key": "protocol-case-d808093affd3443b8ec3d200a5d2fa31",
+    "tools": [
+      {
+        "type": "function",
+        "name": "calculate_quote",
+        "description": "Compute a demo quote from the supplied numeric inputs. All prices are demonstration data.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "unit_price": {
+              "type": "number"
+            },
+            "quantity": {
+              "type": "integer"
+            },
+            "discount_rate": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "unit_price",
+            "quantity",
+            "discount_rate"
+          ],
+          "additionalProperties": false
+        },
+        "strict": true
+      }
+    ],
+    "reasoning": {
+      "effort": "low"
+    }
+  }
+}
