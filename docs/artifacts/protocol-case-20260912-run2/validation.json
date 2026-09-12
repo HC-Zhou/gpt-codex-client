@@ -1,0 +1,17 @@
+{
+  "three_completed_responses": true,
+  "one_ws_connection": true,
+  "response_id_link_matches": true,
+  "input_prefix_matches": true,
+  "delta_equals_tail": true,
+  "tool_call_id_matches": true,
+  "tool_result_233_10": true,
+  "trace_digest_matches": true,
+  "source_digests_match": true,
+  "all_reported_cached_zero": true,
+  "all_raw_terminal_outputs_empty": true,
+  "reconstructed_text_matches_live": true,
+  "no_credential_or_account_literal": true,
+  "quota_redacted": true,
+  "document_json_blocks_parse": true
+}

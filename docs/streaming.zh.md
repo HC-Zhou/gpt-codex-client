@@ -1,6 +1,6 @@
 # 流式响应
 
-`stream=True` 和聚合模式 `stream=False` 使用同一套 SSE 传输和终止状态处理。同步与异步客户端共享响应累积逻辑。
+`stream=True` 和聚合模式 `stream=False` 使用同一套所选传输和终止状态处理（默认 SSE，可选 WebSocket）。同步与异步客户端共享响应累积逻辑。
 
 ```python
 with client.responses.create(model="model", input="Say hi", stream=True) as stream:
@@ -25,3 +25,5 @@ with client.responses.create(model="model", input="Say hi", stream=True) as stre
 重试响应头支持毫秒、秒和 HTTP 日期；无效值回退到指数退避。`max_retry_delay=60.0` 限制单次等待时长。若服务端要求的等待时间超过上限，返回包含原因的 API 错误，不会提前重试。失败响应会在等待前关闭。
 
 开始消费响应体后不再透明重试，即使尚未向调用方交付事件。这避免重放部分工作，但不保证响应头到达前失败的请求在服务端恰好执行一次。
+
+可选 WebSocket 与增量续接的真实事件实例见[协议文档](protocol.zh.md)。成功 WS 终态释放连接供复用，不必关闭整条连接；提前退出或失败则关闭。

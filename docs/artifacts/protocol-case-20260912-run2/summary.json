@@ -1,0 +1,38 @@
+[
+  {
+    "turn": 1,
+    "request_seq": 4,
+    "full_request_seq": 1,
+    "terminal_seq": 60,
+    "full_input_items": 1,
+    "sent_input_items": 1,
+    "request_bytes": 1303,
+    "full_ws_equivalent_bytes": 1303,
+    "response_event_count": 28,
+    "ws_received_json_bytes": 14152
+  },
+  {
+    "turn": 2,
+    "request_seq": 63,
+    "full_request_seq": 62,
+    "terminal_seq": 179,
+    "full_input_items": 3,
+    "sent_input_items": 1,
+    "request_bytes": 1335,
+    "full_ws_equivalent_bytes": 1780,
+    "response_event_count": 58,
+    "ws_received_json_bytes": 22417
+  },
+  {
+    "turn": 3,
+    "request_seq": 181,
+    "full_request_seq": 180,
+    "terminal_seq": 195,
+    "full_input_items": 5,
+    "sent_input_items": 5,
+    "request_bytes": 2067,
+    "full_ws_equivalent_bytes": 2492,
+    "response_event_count": 12,
+    "ws_received_json_bytes": null
+  }
+]

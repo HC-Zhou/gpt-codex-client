@@ -4,8 +4,8 @@ site_description: OpenAI SDK-style client for ChatGPT/Codex OAuth-backed Respons
 repo_url: https://github.com/HC-Zhou/gpt-codex-client
 theme:
   name: material
-  logo: assets/gpt-codex-client-icon.svg
-  favicon: assets/gpt-codex-client-icon.svg
+  logo: assets/gpt-codex-client-v1.png
+  favicon: assets/gpt-codex-client-v1.png
   features:
     - navigation.sections
     - content.code.copy
@@ -23,6 +23,7 @@ plugins:
             Getting Started: 快速开始
             Authentication: 身份认证
             Responses: Responses 接口
+            Protocol: 协议与实测案例
             Chat Compatibility: Chat 兼容接口
             Streaming: 流式响应
             Structured Output: 结构化输出
@@ -39,6 +40,7 @@ nav:
   - Getting Started: index.md
   - Authentication: authentication.md
   - Responses: responses.md
+  - Protocol: protocol.md
   - Chat Compatibility: chat-compatibility.md
   - Streaming: streaming.md
   - Structured Output: structured-output.md

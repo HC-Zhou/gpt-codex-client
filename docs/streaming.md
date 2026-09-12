@@ -1,7 +1,7 @@
 # Streaming
 
-Both `stream=True` and aggregated `stream=False` use the same SSE transport and
-terminal-state handling. Sync and async clients share the response accumulator.
+Both `stream=True` and aggregated `stream=False` use the same selected transport (SSE by default,
+optional WebSocket) and terminal-state handling. Sync and async clients share the response accumulator.
 
 ```python
 with client.responses.create(model="model", input="Say hi", stream=True) as stream:
@@ -45,3 +45,7 @@ the client never retries sooner than the server requested. Failed responses clos
 before waiting. After response-body consumption starts, there is no transparent
 retry, even if no event has yet been delivered. This avoids replaying partial work;
 it is not an exactly-once execution guarantee for requests failing before headers.
+
+Optional WebSocket transport uses the same terminal-state accumulation. A completed
+WebSocket stream releases the connection for reuse; early exit or failure closes it.
+See the [live protocol capture](protocol.md) for actual event examples.
