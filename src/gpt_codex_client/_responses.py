@@ -151,7 +151,7 @@ def _text_config_for_format(text_format: type[T] | JsonObject) -> TextConfig:
         return TextConfig(format=text_format)
     model_json_schema = getattr(text_format, "model_json_schema", None)
     if callable(model_json_schema):
-        schema = model_json_schema()
+        schema = _strict_json_schema(model_json_schema())
         name = getattr(text_format, "__name__", "ParsedResponse")
         return TextConfig(
             format={
@@ -162,6 +162,25 @@ def _text_config_for_format(text_format: type[T] | JsonObject) -> TextConfig:
             }
         )
     raise TypeError("text_format must be a Pydantic v2 model class or a JSON schema dict")
+
+
+def _strict_json_schema(schema: Any) -> JsonObject:
+    if not isinstance(schema, dict):
+        raise TypeError("Pydantic model_json_schema() must return a dict")
+    normalized = dict(schema)
+    _add_additional_properties_false(normalized)
+    return normalized
+
+
+def _add_additional_properties_false(value: Any) -> None:
+    if isinstance(value, dict):
+        if value.get("type") == "object" and "additionalProperties" not in value:
+            value["additionalProperties"] = False
+        for child in value.values():
+            _add_additional_properties_false(child)
+    elif isinstance(value, list):
+        for item in value:
+            _add_additional_properties_false(item)
 
 
 def _parse_output(output_text: str, text_format: type[T] | JsonObject) -> T:

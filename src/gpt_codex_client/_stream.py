@@ -69,6 +69,7 @@ class ResponseStream:
         self._response = self._manager.__enter__()
         self._entered = True
         if self._response.status_code >= 400:
+            self._response.read()
             error = error_from_response(self._response)
             self.close()
             raise error

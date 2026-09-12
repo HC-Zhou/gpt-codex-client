@@ -13,11 +13,10 @@ class Result(BaseModel):
     title: str
 
 parsed = client.responses.parse(
-    model="model",
+    model="gpt-5.5",
     input="Return JSON.",
     text_format=Result,
 )
 ```
 
 Manual JSON schema dictionaries are also accepted.
-

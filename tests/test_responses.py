@@ -119,6 +119,7 @@ def test_responses_parse_pydantic_model(tmp_path: Path) -> None:
     def handler(request: httpx.Request) -> httpx.Response:
         body = json.loads(request.content.decode("utf-8"))
         assert body["text"]["format"]["type"] == "json_schema"
+        assert body["text"]["format"]["schema"]["additionalProperties"] is False
         return _sse_response('{"title":"ok"}')
 
     http_client = httpx.Client(transport=httpx.MockTransport(handler))
@@ -167,13 +168,14 @@ def test_retry_for_429_and_no_retry_for_400(
             return httpx.Response(
                 429, headers={"retry-after": "0"}, json={"error": {"message": "slow"}}
             )
-        return httpx.Response(200, json={"data": [{"id": "m"}]})
+        return httpx.Response(200, json={"models": [{"slug": "m"}]})
 
     http_client = httpx.Client(transport=httpx.MockTransport(handler))
     client = CodexClient(
         token_path=token_path,
         http_client=http_client,
         base_url="https://example.test",
+        models_manifest_url="https://example.test/models.json",
         max_retries=1,
     )
 
@@ -189,6 +191,7 @@ def test_retry_for_429_and_no_retry_for_400(
         token_path=token_path,
         http_client=http_client,
         base_url="https://example.test",
+        models_manifest_url="https://example.test/models.json",
         max_retries=2,
     )
 
@@ -208,6 +211,7 @@ def test_invalid_request_error_uses_detail_message(tmp_path: Path) -> None:
         token_path=token_path,
         http_client=http_client,
         base_url="https://example.test",
+        models_manifest_url="https://example.test/models.json",
         max_retries=0,
     )
 

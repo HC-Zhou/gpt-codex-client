@@ -42,6 +42,7 @@ class AsyncCodexClient:
         login_handler: LoginHandler | None = None,
         auth_client_id: str | None = None,
         client_version: str | None = None,
+        models_manifest_url: str | None = None,
         timeout: float = 120.0,
         max_retries: int = 2,
         default_headers: dict[str, str] | None = None,
@@ -54,6 +55,7 @@ class AsyncCodexClient:
         self.login_handler = login_handler
         self.auth_client_id = auth_client_id
         self.client_version = get_client_version(client_version)
+        self.models_manifest_url = models_manifest_url
         self.timeout = timeout
         self.max_retries = max_retries
         self.default_headers = default_headers or {}
@@ -64,7 +66,7 @@ class AsyncCodexClient:
 
         self.responses = AsyncResponsesResource(self)
         self.chat = AsyncChatResource(self)
-        self.models = AsyncModelsResource(self)
+        self.models = AsyncModelsResource(self, manifest_url=models_manifest_url)
 
     async def __aenter__(self) -> AsyncCodexClient:
         return self

@@ -1,0 +1,47 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="96" y1="72" x2="416" y2="440" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#111827"/>
+      <stop offset="0.58" stop-color="#0f2f4f"/>
+      <stop offset="1" stop-color="#0f766e"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="112" y1="128" x2="400" y2="368" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#f8fafc"/>
+      <stop offset="1" stop-color="#c7d2fe"/>
+    </linearGradient>
+    <linearGradient id="wire" x1="205" y1="248" x2="377" y2="248" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#22d3ee"/>
+      <stop offset="1" stop-color="#84cc16"/>
+    </linearGradient>
+    <filter id="shadow" x="44" y="52" width="424" height="424" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+      <feOffset dy="18"/>
+      <feGaussianBlur stdDeviation="22"/>
+      <feComposite in2="hardAlpha" operator="out"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0.02 0 0 0 0 0.06 0 0 0 0 0.12 0 0 0 0.28 0"/>
+      <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_1_1"/>
+      <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_1_1" result="shape"/>
+    </filter>
+  </defs>
+  <rect width="512" height="512" rx="116" fill="url(#bg)"/>
+  <g filter="url(#shadow)">
+    <rect x="96" y="126" width="320" height="260" rx="42" fill="#07111f"/>
+    <rect x="112" y="142" width="288" height="228" rx="30" fill="url(#panel)" fill-opacity="0.1"/>
+    <rect x="132" y="162" width="248" height="46" rx="18" fill="#0f172a"/>
+    <circle cx="162" cy="185" r="8" fill="#34d399"/>
+    <circle cx="190" cy="185" r="8" fill="#38bdf8"/>
+    <circle cx="218" cy="185" r="8" fill="#a3e635"/>
+    <path d="M160 254L205 288L160 322" stroke="#e0f2fe" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M236 323H304" stroke="#22d3ee" stroke-width="24" stroke-linecap="round"/>
+    <path d="M268 250H321C337.569 250 351 236.569 351 220V211" stroke="url(#wire)" stroke-width="14" stroke-linecap="round"/>
+    <path d="M268 250H321C337.569 250 351 263.431 351 280V299" stroke="url(#wire)" stroke-width="14" stroke-linecap="round"/>
+    <path d="M268 250H342" stroke="url(#wire)" stroke-width="14" stroke-linecap="round"/>
+    <circle cx="351" cy="211" r="20" fill="#22d3ee"/>
+    <circle cx="351" cy="250" r="24" fill="#38bdf8"/>
+    <circle cx="351" cy="299" r="20" fill="#a3e635"/>
+    <circle cx="351" cy="211" r="8" fill="#f8fafc"/>
+    <circle cx="351" cy="250" r="10" fill="#f8fafc"/>
+    <circle cx="351" cy="299" r="8" fill="#f8fafc"/>
+  </g>
+</svg>

@@ -26,6 +26,7 @@ class AsyncResponseStream:
         self._response = await self._manager.__aenter__()
         self._entered = True
         if self._response.status_code >= 400:
+            await self._response.aread()
             error = error_from_response(self._response)
             await self.aclose()
             raise error
