@@ -1,4 +1,5 @@
 site_name: gpt-codex-client
+site_url: https://hc-zhou.github.io/gpt-codex-client/
 site_description: OpenAI SDK-style client for ChatGPT/Codex OAuth-backed Responses workflows.
 repo_url: https://github.com/HC-Zhou/gpt-codex-client
 theme:
@@ -9,6 +10,26 @@ theme:
     - navigation.sections
     - content.code.copy
 plugins:
+  - i18n:
+      docs_structure: suffix
+      languages:
+        - locale: en
+          name: English
+          default: true
+        - locale: zh
+          name: 简体中文
+          site_description: 面向 ChatGPT/Codex OAuth 后端的 Python 客户端。
+          nav_translations:
+            Getting Started: 快速开始
+            Authentication: 身份认证
+            Responses: Responses 接口
+            Chat Compatibility: Chat 兼容接口
+            Streaming: 流式响应
+            Structured Output: 结构化输出
+            Tool Calls: 工具调用
+            Models: 模型列表
+            Errors: 错误处理
+            Release: 发布流程
   - search
   - mkdocstrings:
       handlers:

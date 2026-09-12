@@ -25,4 +25,5 @@ jobs:
       - run: uv run ruff check src tests
       - run: uv run mypy src/gpt_codex_client tests --strict
       - run: uv run pytest -q
+      - run: uv run mkdocs build --strict
       - run: uv build
