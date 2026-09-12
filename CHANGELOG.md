@@ -6,6 +6,28 @@ Entries follow [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-09-12
+
+### Added
+
+- `model_reasoning_effort` on all Responses and Chat request entrypoints, mapped to `reasoning.effort` with conflict detection and existing option compatibility.
+- A new generated project icon for README and documentation.
+- A detailed protocol reference with a sanitized real three-turn tool-use trace and an opt-in capture script.
+
+- Request-level `session_id`, explicit `prompt_cache_key`, and optional WebSocket transport across synchronous/asynchronous Responses, parsing, and Chat APIs; SSE remains the default.
+- Bounded internal session connection reuse, strict full-history-to-delta planning, idle expiry, per-session cleanup, and one-shot connections for concurrent requests without a public Session object.
+- Safe pre-submission SSE fallback in auto mode and one full-context recovery for an explicitly missing automatic continuation; ambiguous failures aren't replayed.
+- Public typed `Usage` with six server counters, unknown values preserved as `None`, unmodified input totals, and raw usage retention across Responses and terminal Chat results.
+
+### Validation and upgrade
+
+- 224 offline tests passed, including reasoning alias mapping across SSE and WebSocket entrypoints; formatting, lint, strict typing, package build, and strict bilingual documentation build passed.
+
+- Automated tests use offline mocks; the recorded synchronous real case separately verifies WebSocket reuse, delta submission, and SSE replay.
+- The real second request used 25% fewer JSON bytes than its full equivalent; all three requests reported zero cache-read tokens. No prompt-cache or latency benefit is claimed.
+- Existing 0.2.0 call syntax remains valid. WebSocket is opt-in: install `gpt-codex-client[websocket]` and close owned connections with `close()` / `aclose()`.
+- This is the SDK's 1.0 release; the private backend protocol and model availability remain server-controlled.
+
 ## [0.2.0] - 2026-09-12
 
 This version includes protocol reliability and conversation replay improvements since `v0.1.1`.
@@ -57,6 +79,8 @@ This version includes protocol reliability and conversation replay improvements 
 - Added OAuth PKCE token lifecycle helpers.
 - Added sync and async Codex clients with Responses, chat compatibility, models, and SSE streaming.
 
-[Unreleased]: https://github.com/HC-Zhou/gpt-codex-client/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/HC-Zhou/gpt-codex-client/compare/v1.0.0...HEAD
 
 [0.2.0]: https://github.com/HC-Zhou/gpt-codex-client/compare/v0.1.1...v0.2.0
+
+[1.0.0]: https://github.com/HC-Zhou/gpt-codex-client/compare/v0.2.0...v1.0.0

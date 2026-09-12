@@ -6,6 +6,26 @@
 
 ## [未发布]
 
+## [1.0.0] - 2026-09-12
+
+### 新增
+
+- 同步、异步 Responses、parse、流式和 Chat 接口支持 `model_reasoning_effort`，映射为 `reasoning.effort`，保留现有写法并检测冲突。
+- 请求级 `session_id`、显式 `prompt_cache_key` 和可选 WebSocket 传输；SSE 仍为默认。
+- 有容量上限和空闲过期的内部连接缓存、严格前缀增量续接、按会话清理，以及并发请求的一次性连接，不引入公开 Session 对象。
+- auto 模式提交前安全回退 SSE，自动续接明确失效时恢复一次全量上下文；不重放结果不明的请求。
+- 类型化 `Usage` 暴露六项服务端计数，缺失保留 `None`，输入总量不扣减缓存计数，并保留 raw 数据。
+- 全新项目图标、中英文协议说明、脱敏的真实三轮工具调用记录，以及需显式运行的采集脚本。
+
+### 验证与升级
+
+- 224 项离线测试通过，覆盖 SSE/WebSocket 推理参数映射；格式、lint、严格类型检查、包构建及中英文文档严格构建均通过。
+
+- 自动化回归使用离线模拟；另一次同步真实案例验证了 WebSocket 复用、增量提交和 SSE 回放。
+- 实测第二轮 JSON 请求比同轮全量序列化减少 25%；三轮缓存读取均为零，不据此承诺缓存命中或延迟收益。
+- 0.2.0 调用语法继续可用；WebSocket 需安装 `gpt-codex-client[websocket]` 并显式选择，通过 `close()` / `aclose()` 释放自有连接。
+- 1.0 表示 SDK 的正式版本，私有后端协议和模型可用性仍由服务端控制。
+
 ## [0.2.0] - 2026-09-12
 
 本版本包含自 `v0.1.1` 以来的协议可靠性和会话回放改进。
@@ -57,6 +77,8 @@
 - 新增 OAuth PKCE 令牌生命周期辅助功能。
 - 新增同步与异步 Codex 客户端，支持 Responses、Chat 兼容接口、模型列表和 SSE 流式响应。
 
-[未发布]: https://github.com/HC-Zhou/gpt-codex-client/compare/v0.2.0...HEAD
+[未发布]: https://github.com/HC-Zhou/gpt-codex-client/compare/v1.0.0...HEAD
 
 [0.2.0]: https://github.com/HC-Zhou/gpt-codex-client/compare/v0.1.1...v0.2.0
+
+[1.0.0]: https://github.com/HC-Zhou/gpt-codex-client/compare/v0.2.0...v1.0.0
