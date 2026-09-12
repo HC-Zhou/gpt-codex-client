@@ -4,10 +4,11 @@ import asyncio
 import math
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
+from copy import deepcopy
 from pathlib import Path
 from types import TracebackType
 from typing import Any
-from urllib.parse import urljoin
+from urllib.parse import urlencode, urljoin, urlsplit, urlunsplit
 
 import httpx
 
@@ -16,6 +17,7 @@ from ._async_models import AsyncModelsResource
 from ._async_responses import AsyncResponsesResource
 from ._async_stream import AsyncResponseStream
 from ._auth import LoginHandler
+from ._cache import session_headers
 from ._chat import AsyncChatResource
 from ._config import (
     DEFAULT_BASE_URL,
@@ -33,7 +35,9 @@ from ._errors import (
     is_retryable_error,
     retry_delay,
 )
+from ._session_pool import SessionPool
 from ._types import JsonObject
+from ._websocket import AsyncWebSocketSource, aclose_socket
 
 
 class AsyncCodexClient:
@@ -53,7 +57,11 @@ class AsyncCodexClient:
         default_headers: dict[str, str] | None = None,
         http_client: httpx.AsyncClient | None = None,
         base_url: str = DEFAULT_BASE_URL,
+        session_cache_max_size: int = 32,
+        session_cache_idle_timeout: float = 300.0,
     ) -> None:
+        self._sessions = SessionPool(session_cache_max_size, session_cache_idle_timeout)
+        self._ws_cleanup_tasks: set[asyncio.Task[None]] = set()
         self.headless = headless
         self.no_browser = no_browser
         self.token_path = token_path
@@ -89,7 +97,15 @@ class AsyncCodexClient:
     ) -> None:
         await self.aclose()
 
+    async def aclose_session(self, session_id: str) -> None:
+        for entry in self._sessions.clear(session_id):
+            await aclose_socket(entry)
+
     async def aclose(self) -> None:
+        for entry in self._sessions.clear(close=True):
+            await aclose_socket(entry)
+        if self._ws_cleanup_tasks:
+            await asyncio.gather(*self._ws_cleanup_tasks)
         if self._owns_http_client:
             await self._http_client.aclose()
 
@@ -143,9 +159,50 @@ class AsyncCodexClient:
         json: JsonObject | None = None,
         timeout: float | None = None,
         extra_headers: dict[str, str] | None = None,
+        session_id: str | None = None,
+        transport: str = "sse",
     ) -> AsyncResponseStream:
         url = urljoin(self.base_url, path.lstrip("/"))
+        json = deepcopy(json)
         headers = await self._headers(extra_headers)
+        headers = session_headers(headers, session_id)
+        if transport not in {"sse", "websocket", "auto"}:
+            raise ValueError("transport must be sse, websocket, or auto")
+        if transport != "sse":
+            parts = urlsplit(url)
+            ws_url = urlunsplit(
+                (
+                    "wss" if parts.scheme == "https" else "ws",
+                    parts.netloc,
+                    parts.path,
+                    urlencode(self._params()),
+                    "",
+                )
+            )
+
+            async def fallback() -> AsyncResponseStream:
+                return await self._stream(
+                    method,
+                    path,
+                    json=json,
+                    timeout=timeout,
+                    extra_headers=extra_headers,
+                    session_id=session_id,
+                )
+
+            return AsyncResponseStream(
+                source=AsyncWebSocketSource(
+                    self._sessions,
+                    ws_url,
+                    headers,
+                    json or {},
+                    session_id,
+                    timeout or self.timeout,
+                    transport,
+                    fallback,
+                    self._ws_cleanup_tasks,
+                )
+            )
 
         @asynccontextmanager
         async def opened() -> AsyncIterator[httpx.Response]:

@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "gpt-codex-client"
-version = "0.2.0"
+version = "1.0.0"
 description = "OpenAI SDK-style Python client for ChatGPT/Codex OAuth-backed Responses workflows."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -14,7 +14,7 @@ authors = [
 ]
 keywords = ["openai", "codex", "chatgpt", "responses", "sdk"]
 classifiers = [
-  "Development Status :: 3 - Alpha",
+  "Development Status :: 5 - Production/Stable",
   "Intended Audience :: Developers",
   "License :: OSI Approved :: MIT License",
   "Programming Language :: Python :: 3",
@@ -31,6 +31,7 @@ dependencies = [
 
 [project.optional-dependencies]
 pydantic = ["pydantic>=2"]
+websocket = ["websockets>=15,<16"]
 
 [dependency-groups]
 dev = [
@@ -43,6 +44,7 @@ dev = [
   "pydantic>=2",
   "pytest>=8.3",
   "pytest-asyncio>=0.24",
+  "websockets>=15,<16",
   "ruff>=0.6",
 ]
 

@@ -39,8 +39,12 @@ class ChatCompletionsResource:
         tool_choice: str | JsonObject | None = "auto",
         stream: Literal[False] = False,
         reasoning_effort: str | None = None,
+        model_reasoning_effort: str | None = None,
         include: list[str] | None = None,
         preserve_context: bool = False,
+        session_id: str | None = None,
+        prompt_cache_key: str | None = None,
+        transport: Literal["sse", "websocket", "auto"] = "sse",
         timeout: float | None = None,
     ) -> ChatCompletion: ...
 
@@ -54,8 +58,12 @@ class ChatCompletionsResource:
         tool_choice: str | JsonObject | None = "auto",
         stream: Literal[True],
         reasoning_effort: str | None = None,
+        model_reasoning_effort: str | None = None,
         include: list[str] | None = None,
         preserve_context: bool = False,
+        session_id: str | None = None,
+        prompt_cache_key: str | None = None,
+        transport: Literal["sse", "websocket", "auto"] = "sse",
         timeout: float | None = None,
     ) -> ChatCompletionStream: ...
 
@@ -68,8 +76,12 @@ class ChatCompletionsResource:
         tool_choice: str | JsonObject | None = "auto",
         stream: bool = False,
         reasoning_effort: str | None = None,
+        model_reasoning_effort: str | None = None,
         include: list[str] | None = None,
         preserve_context: bool = False,
+        session_id: str | None = None,
+        prompt_cache_key: str | None = None,
+        transport: Literal["sse", "websocket", "auto"] = "sse",
         timeout: float | None = None,
     ) -> ChatCompletion | ChatCompletionStream:
         instructions, response_input = chat_messages_to_response_input(messages, model=model)
@@ -83,8 +95,12 @@ class ChatCompletionsResource:
             tool_choice=response_tool_choice,
             stream=stream,
             reasoning=reasoning_from_effort(reasoning_effort),
+            model_reasoning_effort=model_reasoning_effort,
             include=include,
             preserve_context=preserve_context,
+            session_id=session_id,
+            prompt_cache_key=prompt_cache_key,
+            transport=transport,
             timeout=timeout,
         )
         if isinstance(result, ResponseStream):
@@ -111,8 +127,12 @@ class AsyncChatCompletionsResource:
         tool_choice: str | JsonObject | None = "auto",
         stream: Literal[False] = False,
         reasoning_effort: str | None = None,
+        model_reasoning_effort: str | None = None,
         include: list[str] | None = None,
         preserve_context: bool = False,
+        session_id: str | None = None,
+        prompt_cache_key: str | None = None,
+        transport: Literal["sse", "websocket", "auto"] = "sse",
         timeout: float | None = None,
     ) -> ChatCompletion: ...
 
@@ -126,8 +146,12 @@ class AsyncChatCompletionsResource:
         tool_choice: str | JsonObject | None = "auto",
         stream: Literal[True],
         reasoning_effort: str | None = None,
+        model_reasoning_effort: str | None = None,
         include: list[str] | None = None,
         preserve_context: bool = False,
+        session_id: str | None = None,
+        prompt_cache_key: str | None = None,
+        transport: Literal["sse", "websocket", "auto"] = "sse",
         timeout: float | None = None,
     ) -> AsyncChatCompletionStream: ...
 
@@ -140,8 +164,12 @@ class AsyncChatCompletionsResource:
         tool_choice: str | JsonObject | None = "auto",
         stream: bool = False,
         reasoning_effort: str | None = None,
+        model_reasoning_effort: str | None = None,
         include: list[str] | None = None,
         preserve_context: bool = False,
+        session_id: str | None = None,
+        prompt_cache_key: str | None = None,
+        transport: Literal["sse", "websocket", "auto"] = "sse",
         timeout: float | None = None,
     ) -> ChatCompletion | AsyncChatCompletionStream:
         instructions, response_input = chat_messages_to_response_input(messages, model=model)
@@ -153,8 +181,12 @@ class AsyncChatCompletionsResource:
             tool_choice=chat_tool_choice_to_response(tool_choice),
             stream=stream,
             reasoning=reasoning_from_effort(reasoning_effort),
+            model_reasoning_effort=model_reasoning_effort,
             include=include,
             preserve_context=preserve_context,
+            session_id=session_id,
+            prompt_cache_key=prompt_cache_key,
+            transport=transport,
             timeout=timeout,
         )
         if isinstance(result, AsyncResponseStream):

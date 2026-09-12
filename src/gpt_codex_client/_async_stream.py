@@ -3,6 +3,7 @@ from __future__ import annotations
 from collections.abc import AsyncIterator
 from contextlib import AbstractAsyncContextManager
 from types import TracebackType
+from typing import Protocol
 
 import httpx
 
@@ -23,9 +24,21 @@ async def _events(response: httpx.Response) -> AsyncIterator[ResponseStreamEvent
         yield event
 
 
+class AsyncEventSource(Protocol):
+    async def open(self) -> None: ...
+    def events(self) -> AsyncIterator[ResponseStreamEvent]: ...
+    async def close(self, response: Response | None) -> None: ...
+
+
 class AsyncResponseStream:
-    def __init__(self, manager: AbstractAsyncContextManager[httpx.Response]) -> None:
+    def __init__(
+        self,
+        manager: AbstractAsyncContextManager[httpx.Response] | None = None,
+        *,
+        source: AsyncEventSource | None = None,
+    ) -> None:
         self._manager = manager
+        self._source = source
         self._response: httpx.Response | None = None
         self._entered = False
         self._closed = False
@@ -39,6 +52,11 @@ class AsyncResponseStream:
         if self._closed:
             raise StreamError("Stream is closed")
         if not self._entered:
+            if self._source is not None:
+                await self._source.open()
+                self._entered = True
+                return self
+            assert self._manager is not None
             self._response = await self._manager.__aenter__()
             self._entered = True
             if self._response.status_code >= 400:
@@ -65,10 +83,15 @@ class AsyncResponseStream:
             return
         if not self._entered:
             await self.__aenter__()
-        if self._response is None or self._closed:
+        if (self._response is None and self._source is None) or self._closed:
             raise StreamError("Stream is not open")
         try:
-            async for event in _events(self._response):
+            if self._source is not None:
+                events = self._source.events()
+            else:
+                assert self._response is not None
+                events = _events(self._response)
+            async for event in events:
                 recorded = self._state.record(event)
                 if self._state.is_terminal():
                     await self.aclose()
@@ -90,7 +113,10 @@ class AsyncResponseStream:
         if self._closed:
             return
         self._closed = True
-        if self._entered:
+        if self._entered and self._source is not None:
+            await self._source.close(self._state.final)
+        elif self._entered:
+            assert self._manager is not None
             await self._manager.__aexit__(None, None, None)
 
     async def get_final_response(self) -> Response:

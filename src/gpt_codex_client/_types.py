@@ -60,6 +60,36 @@ class Reasoning:
 
 
 @dataclass
+class Usage:
+    """Server token counts; absent or invalid counters remain unknown."""
+
+    input_tokens: int | None = None
+    output_tokens: int | None = None
+    cached_tokens: int | None = None
+    cache_write_tokens: int | None = None
+    reasoning_tokens: int | None = None
+    total_tokens: int | None = None
+    raw: JsonObject = field(default_factory=dict)
+
+    @classmethod
+    def from_dict(cls, payload: JsonObject) -> Usage:
+        def count(source: Any, key: str) -> int | None:
+            value = source.get(key) if isinstance(source, dict) else None
+            return value if type(value) is int and value >= 0 else None
+
+        details = payload.get("input_tokens_details")
+        return cls(
+            input_tokens=count(payload, "input_tokens"),
+            output_tokens=count(payload, "output_tokens"),
+            cached_tokens=count(details, "cached_tokens"),
+            cache_write_tokens=count(details, "cache_write_tokens"),
+            reasoning_tokens=count(payload.get("output_tokens_details"), "reasoning_tokens"),
+            total_tokens=count(payload, "total_tokens"),
+            raw=deepcopy(payload),
+        )
+
+
+@dataclass
 class Response:
     id: str | None
     model: str | None
@@ -67,6 +97,7 @@ class Response:
     status: str | None = None
     output: list[JsonObject] = field(default_factory=list)
     raw: JsonObject = field(default_factory=dict)
+    usage: Usage | None = None
 
     @classmethod
     def from_dict(cls, payload: JsonObject) -> Response:
@@ -77,6 +108,9 @@ class Response:
             model=_str_or_none(payload.get("model")),
             output_text=output_text,
             status=_str_or_none(payload.get("status")),
+            usage=Usage.from_dict(payload["usage"])
+            if isinstance(payload.get("usage"), dict)
+            else None,
             output=output,
             raw=payload,
         )
@@ -168,6 +202,7 @@ class ChatCompletion:
     created: int = field(default_factory=lambda: int(time.time()))
     object: str = "chat.completion"
     raw: JsonObject = field(default_factory=dict)
+    usage: Usage | None = None
 
     @classmethod
     def from_response(cls, response: Response, *, preserve_context: bool = False) -> ChatCompletion:
@@ -186,6 +221,7 @@ class ChatCompletion:
             model=response.model,
             choices=[choice],
             raw=response.raw,
+            usage=response.usage,
         )
 
 
@@ -197,6 +233,7 @@ class ChatCompletionChunk:
     created: int = field(default_factory=lambda: int(time.time()))
     object: str = "chat.completion.chunk"
     raw: JsonObject = field(default_factory=dict)
+    usage: Usage | None = None
 
 
 def _str_or_none(value: Any) -> str | None:
