@@ -19,6 +19,8 @@ from ._errors import (
 from ._types import (
     ChatCompletion,
     ChatCompletionChunk,
+    ChatDelta,
+    ChatMessage,
     FunctionTool,
     Model,
     ParsedResponse,
@@ -28,7 +30,7 @@ from ._types import (
     TextConfig,
 )
 
-__version__ = "0.1.1"
+__version__ = "0.2.0"
 
 __all__ = [
     "APIConnectionError",
@@ -38,6 +40,8 @@ __all__ = [
     "AuthError",
     "ChatCompletion",
     "ChatCompletionChunk",
+    "ChatDelta",
+    "ChatMessage",
     "CodexClient",
     "CodexError",
     "FunctionTool",

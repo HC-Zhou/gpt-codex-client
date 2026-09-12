@@ -69,7 +69,9 @@ def test_chat_converter_handles_roles_images_and_tools() -> None:
             {
                 "role": "assistant",
                 "content": "calling",
-                "tool_calls": [{"id": "call_1", "function": {"arguments": "{bad-json"}}],
+                "tool_calls": [
+                    {"id": "call_1", "function": {"name": "lookup", "arguments": "{bad-json"}}
+                ],
             },
             {"role": "tool", "tool_call_id": "call_1", "content": "result"},
         ]
@@ -80,10 +82,14 @@ def test_chat_converter_handles_roles_images_and_tools() -> None:
         {"type": "input_text", "text": "look"},
         {"type": "input_image", "image_url": "data:image/png;base64,abc"},
     ]
-    assert response_input[1]["tool_calls"] == [
-        {"id": "call_1", "function": {"arguments": "{bad-json"}}
-    ]
-    assert response_input[2]["type"] == "function_call_output"
+    assert response_input[2] == {
+        "type": "function_call",
+        "call_id": "call_1",
+        "name": "lookup",
+        "arguments": "{bad-json",
+    }
+    assert response_input[3]["type"] == "function_call_output"
+    assert "role" not in response_input[3]
     assert parse_tool_arguments("{bad-json") == "{bad-json"
 
 
@@ -103,7 +109,12 @@ def test_chat_completions_create(tmp_path: Path) -> None:
                         "type": "message",
                         "content": [{"type": "output_text", "text": "hello"}],
                     },
-                    {"type": "function_call", "name": "lookup", "arguments": "{}"},
+                    {
+                        "type": "function_call",
+                        "call_id": "call_1",
+                        "name": "lookup",
+                        "arguments": "{}",
+                    },
                 ],
             }
         }
@@ -127,7 +138,7 @@ def test_chat_completions_create(tmp_path: Path) -> None:
     assert isinstance(completion, ChatCompletion)
     assert completion.choices[0].message.content == "hello"
     assert completion.choices[0].message.tool_calls == [
-        {"type": "function_call", "name": "lookup", "arguments": "{}"}
+        {"id": "call_1", "type": "function", "function": {"name": "lookup", "arguments": "{}"}}
     ]
     assert seen["body"]["instructions"] == "sys"
     assert seen["body"]["tools"] == [

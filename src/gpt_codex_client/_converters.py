@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 import json
+from copy import deepcopy
 from typing import Any
 
-from ._types import FunctionTool, JsonObject, Reasoning, TextConfig
+from ._types import ChatCompletion, FunctionTool, JsonObject, Reasoning, Response, TextConfig
 
 DEFAULT_INSTRUCTIONS = "You are Codex, a concise coding assistant."
 
@@ -21,6 +22,7 @@ def response_request_body(
     text: TextConfig | JsonObject | None = None,
     include: list[str] | None = None,
     previous_response_id: str | None = None,
+    preserve_context: bool = False,
 ) -> JsonObject:
     body: JsonObject = {
         "model": model,
@@ -29,6 +31,8 @@ def response_request_body(
         "store": False,
         "instructions": instructions or DEFAULT_INSTRUCTIONS,
     }
+    if preserve_context:
+        include = list(dict.fromkeys([*(include or []), "reasoning.encrypted_content"]))
     optional: dict[str, Any | None] = {
         "tool_choice": tool_choice,
         "parallel_tool_calls": parallel_tool_calls,
@@ -57,6 +61,8 @@ def _normalize_response_input(input: str | list[Any]) -> list[Any]:
 
 def chat_messages_to_response_input(
     messages: list[JsonObject],
+    *,
+    model: str | None = None,
 ) -> tuple[str | None, list[JsonObject]]:
     instructions: list[str] = []
     input_items: list[JsonObject] = []
@@ -69,18 +75,75 @@ def chat_messages_to_response_input(
                 instructions.append(text)
             continue
 
-        item: JsonObject = {"role": role}
+        if role == "assistant" and message.get("provider_data") is not None:
+            context = message["provider_data"]
+            if (
+                not isinstance(context, dict)
+                or context.get("version") != 1
+                or context.get("provider") != "codex"
+                or context.get("model") != model
+                or model is None
+            ):
+                raise ValueError("Unsupported provider_data version, provider, or model")
+            output = context.get("output_items")
+            if not isinstance(output, list) or not all(isinstance(item, dict) for item in output):
+                raise ValueError("Invalid provider_data output_items")
+            projection = (
+                ChatCompletion.from_response(
+                    Response.from_dict({"status": "completed", "output": output})
+                )
+                .choices[0]
+                .message
+            )
+            if (projection.content or "") != (_content_to_plain_text(content) or "") or (
+                projection.tool_calls or []
+            ) != (message.get("tool_calls") or []):
+                raise ValueError(
+                    "Message differs from provider_data; remove provider_data to edit history"
+                )
+            input_items.extend(deepcopy(output))
+            continue
         if role == "tool":
-            item["type"] = "function_call_output"
-            if isinstance(message.get("tool_call_id"), str):
-                item["call_id"] = message["tool_call_id"]
-            item["output"] = _content_to_plain_text(content)
-        else:
-            item["content"] = _content_to_response_content(content, role=role)
-            tool_calls = message.get("tool_calls")
-            if isinstance(tool_calls, list):
-                item["tool_calls"] = [call for call in tool_calls if isinstance(call, dict)]
-        input_items.append(item)
+            call_id = message.get("tool_call_id")
+            if not isinstance(call_id, str) or not call_id:
+                raise ValueError("Tool result requires tool_call_id")
+            input_items.append(
+                {
+                    "type": "function_call_output",
+                    "call_id": call_id,
+                    "output": _content_to_plain_text(content),
+                }
+            )
+            continue
+        tool_calls = message.get("tool_calls")
+        if (content is not None and content != "") or not tool_calls:
+            input_items.append(
+                {"role": role, "content": _content_to_response_content(content, role=role)}
+            )
+        if tool_calls is not None:
+            if role != "assistant" or not isinstance(tool_calls, list):
+                raise ValueError("tool_calls requires an assistant list")
+            for call in tool_calls:
+                if not isinstance(call, dict) or call.get("type", "function") != "function":
+                    raise ValueError("Only Chat function tool calls are supported")
+                function = call.get("function")
+                if (
+                    not isinstance(function, dict)
+                    or not isinstance(call.get("id"), str)
+                    or not call["id"]
+                    or not isinstance(function.get("name"), str)
+                    or not function["name"]
+                    or not isinstance(function.get("arguments"), str)
+                ):
+                    raise ValueError("Tool call requires id, name and string arguments")
+                input_items.append(
+                    {
+                        "type": "function_call",
+                        "call_id": call["id"],
+                        "name": function["name"],
+                        "arguments": function["arguments"],
+                    }
+                )
     return ("\n\n".join(instructions) if instructions else None, input_items)
 
 
@@ -97,6 +160,8 @@ def chat_tools_to_response_tools(tools: list[JsonObject] | None) -> list[JsonObj
             parameters = function.get("parameters")
             if isinstance(parameters, dict):
                 item["parameters"] = parameters
+            if "strict" in function:
+                item["strict"] = function["strict"]
             converted.append(item)
         else:
             converted.append(tool)

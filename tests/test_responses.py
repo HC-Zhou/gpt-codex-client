@@ -97,7 +97,6 @@ def test_sse_parser_and_stream_final_response(tmp_path: Path) -> None:
         "response.output_text.delta",
         "response.output_text.delta",
         "response.completed",
-        "done",
     ]
     assert final.output_text == "hello"
     http_client.close()

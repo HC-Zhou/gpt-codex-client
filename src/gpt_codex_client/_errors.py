@@ -1,7 +1,14 @@
 from __future__ import annotations
 
+import math
+import re
+import time
 from dataclasses import dataclass
-from typing import Any
+from email.utils import parsedate_to_datetime
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from ._types import Response
 
 import httpx
 
@@ -55,17 +62,39 @@ class ServerError(APIError):
 
 
 class StreamError(CodexError):
-    pass
+    def __init__(
+        self,
+        message: str,
+        *,
+        kind: str = "protocol",
+        code: str | None = None,
+        partial_response: Response | None = None,
+        raw_event: dict[str, Any] | None = None,
+    ) -> None:
+        super().__init__(message)
+        self.kind = kind
+        self.code = code
+        self.partial_response = partial_response
+        self.raw_event = raw_event
 
 
 def _retry_after(response: httpx.Response) -> float | None:
-    value = response.headers.get("retry-after")
-    if value is None:
-        return None
-    try:
-        return max(0.0, float(value))
-    except ValueError:
-        return None
+    for header, divisor in (("retry-after-ms", 1000), ("retry-after", 1)):
+        value = response.headers.get(header)
+        if value is None:
+            continue
+        try:
+            delay = float(value) / divisor
+        except ValueError:
+            if header != "retry-after":
+                continue
+            try:
+                delay = parsedate_to_datetime(value).timestamp() - time.time()
+            except (ValueError, TypeError, OverflowError):
+                continue
+        if math.isfinite(delay):
+            return max(0.0, delay)
+    return None
 
 
 def _body(response: httpx.Response) -> Any | None:
@@ -123,4 +152,27 @@ def error_from_response(response: httpx.Response) -> CodexError:
 
 
 def is_retryable_error(error: CodexError) -> bool:
-    return isinstance(error, RateLimitError | ServerError)
+    if not isinstance(error, APIError):
+        return False
+    if error.status_code == 429:
+        body = error.body if isinstance(error.body, dict) else {}
+        detail = body.get("error", body)
+        code = str(detail.get("code", "")) if isinstance(detail, dict) else ""
+        if re.search(
+            r"insufficient_quota|usage_limit|quota_exceeded|billing|out of budget|quota exceeded|"
+            r"available balance|monthly usage limit|GoUsageLimitError|FreeUsageLimitError",
+            code + " " + error.message,
+            re.I,
+        ):
+            return False
+    return error.status_code in {408, 429, 500, 502, 503, 504}
+
+
+def retry_delay(attempt: int, error: CodexError, maximum: float) -> float:
+    delay = error.retry_after if isinstance(error, APIError) else None
+    delay = delay if delay is not None else min(2.0, 0.25 * (2**attempt))
+    if delay > maximum:
+        if isinstance(error, APIError):
+            error.message += f" (retry delay {delay}s exceeds max_retry_delay={maximum}s)"
+        raise error
+    return delay

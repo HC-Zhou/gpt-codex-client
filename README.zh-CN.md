@@ -164,3 +164,11 @@ print(completion.choices[0].message.content)
 uv sync --all-extras --dev
 uv run pytest -q
 ```
+
+## 协议可靠性更新（0.2.0）
+
+流式和聚合推理请求均支持建连阶段重试；流失败通过 StreamError 保留部分结果，
+缺少终止事件的 EOF 会明确报错。Chat 工具调用采用 id/type/function 结构，
+支持参数增量与准确的结束原因。可选 preserve_context 保留同模型回放所需的不透明上下文。
+迁移细节见[流式接口](docs/streaming.md)、[Chat 兼容](docs/chat-compatibility.md)和
+[原生回放](docs/responses.md)。验证使用离线 MockTransport，没有调用真实 OAuth/Codex 端点。

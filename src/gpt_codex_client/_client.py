@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+import math
 import time
+from collections.abc import Iterator
+from contextlib import contextmanager
 from pathlib import Path
 from types import TracebackType
 from typing import Any
@@ -24,6 +27,7 @@ from ._errors import (
     CodexError,
     error_from_response,
     is_retryable_error,
+    retry_delay,
 )
 from ._models import ModelsResource
 from ._responses import ResponsesResource
@@ -44,6 +48,7 @@ class CodexClient:
         models_manifest_url: str | None = None,
         timeout: float = 120.0,
         max_retries: int = 2,
+        max_retry_delay: float = 60.0,
         default_headers: dict[str, str] | None = None,
         http_client: httpx.Client | None = None,
         base_url: str = DEFAULT_BASE_URL,
@@ -56,7 +61,12 @@ class CodexClient:
         self.client_version = get_client_version(client_version)
         self.models_manifest_url = models_manifest_url
         self.timeout = timeout
+        if isinstance(max_retries, bool) or not isinstance(max_retries, int) or max_retries < 0:
+            raise ValueError("max_retries must be a non-negative integer")
+        if not math.isfinite(max_retry_delay) or max_retry_delay < 0:
+            raise ValueError("max_retry_delay must be finite and non-negative")
         self.max_retries = max_retries
+        self.max_retry_delay = max_retry_delay
         self.default_headers = default_headers or {}
         self.base_url = base_url.rstrip("/") + "/"
         self._http_client = http_client or httpx.Client(timeout=timeout)
@@ -134,15 +144,46 @@ class CodexClient:
         extra_headers: dict[str, str] | None = None,
     ) -> ResponseStream:
         url = urljoin(self.base_url, path.lstrip("/"))
-        manager = self._http_client.stream(
-            method,
-            url,
-            json=json,
-            params=self._params(),
-            headers=self._headers(extra_headers),
-            timeout=timeout or self.timeout,
-        )
-        return ResponseStream(manager)
+        headers = self._headers(extra_headers)
+
+        @contextmanager
+        def opened() -> Iterator[httpx.Response]:
+            for attempt in range(self.max_retries + 1):
+                manager = self._http_client.stream(
+                    method,
+                    url,
+                    json=json,
+                    params=self._params(),
+                    headers=headers,
+                    timeout=timeout or self.timeout,
+                )
+                error: CodexError
+                try:
+                    response = manager.__enter__()
+                except httpx.TimeoutException as exc:
+                    error = APITimeoutError(str(exc))
+                except httpx.RequestError as exc:
+                    error = APIConnectionError(str(exc))
+                else:
+                    if response.status_code < 400:
+                        try:
+                            yield response
+                        finally:
+                            manager.__exit__(None, None, None)
+                        return
+                    try:
+                        response.read()
+                        error = error_from_response(response)
+                    finally:
+                        manager.__exit__(None, None, None)
+                    if not is_retryable_error(error):
+                        raise error
+                if attempt >= self.max_retries:
+                    raise error
+                delay = retry_delay(attempt, error, self.max_retry_delay)
+                self._sleep_before_retry(attempt, delay)
+
+        return ResponseStream(opened())
 
     def _params(self) -> dict[str, str]:
         return {"client_version": self.client_version}

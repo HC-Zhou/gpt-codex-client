@@ -166,3 +166,13 @@ print(completion.choices[0].message.content)
 uv sync --all-extras --dev
 uv run pytest -q
 ```
+
+## Protocol reliability (0.2.0)
+
+Inference opening retries now honor max_retries for streamed and aggregated calls.
+Stream failures expose partial results through StreamError; EOF without a terminal
+event is an error. Chat tool calls use id/type/function format and include argument
+deltas and accurate finish reasons. Optional preserve_context retains opaque
+Codex context for same-model replay. See [streaming](docs/streaming.md),
+[Chat migration](docs/chat-compatibility.md), and [native replay](docs/responses.md).
+Validation uses offline MockTransport fixtures, not live OAuth/Codex calls.
