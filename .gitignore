@@ -12,3 +12,22 @@ __pycache__/
 site/
 .coverage
 htmlcov/
+
+# Local agent installations and editor state
+.agents/
+.codex/
+skills-lock.json
+.vscode/
+
+# Local credentials and environment overrides
+.env
+.env.*
+!.env.example
+auth.json
+
+# Additional test and tooling artifacts
+.coverage.*
+coverage.xml
+.tox/
+.nox/
+*.log
