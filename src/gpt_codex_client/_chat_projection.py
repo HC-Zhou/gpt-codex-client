@@ -93,6 +93,7 @@ class ChatProjection:
                         )
                     ],
                     raw=event.data,
+                    usage=response.usage,
                 )
             )
         return chunks

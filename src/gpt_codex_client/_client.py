@@ -4,14 +4,16 @@ import math
 import time
 from collections.abc import Iterator
 from contextlib import contextmanager
+from copy import deepcopy
 from pathlib import Path
 from types import TracebackType
 from typing import Any
-from urllib.parse import urljoin
+from urllib.parse import urlencode, urljoin, urlsplit, urlunsplit
 
 import httpx
 
 from ._auth import LoginHandler, get_token
+from ._cache import session_headers
 from ._chat import ChatResource
 from ._config import (
     DEFAULT_BASE_URL,
@@ -31,8 +33,10 @@ from ._errors import (
 )
 from ._models import ModelsResource
 from ._responses import ResponsesResource
+from ._session_pool import SessionPool
 from ._stream import ResponseStream
 from ._types import JsonObject
+from ._websocket import WebSocketSource, close_socket
 
 
 class CodexClient:
@@ -52,7 +56,10 @@ class CodexClient:
         default_headers: dict[str, str] | None = None,
         http_client: httpx.Client | None = None,
         base_url: str = DEFAULT_BASE_URL,
+        session_cache_max_size: int = 32,
+        session_cache_idle_timeout: float = 300.0,
     ) -> None:
+        self._sessions = SessionPool(session_cache_max_size, session_cache_idle_timeout)
         self.headless = headless
         self.no_browser = no_browser
         self.token_path = token_path
@@ -88,7 +95,13 @@ class CodexClient:
     ) -> None:
         self.close()
 
+    def close_session(self, session_id: str) -> None:
+        for entry in self._sessions.clear(session_id):
+            close_socket(entry)
+
     def close(self) -> None:
+        for entry in self._sessions.clear(close=True):
+            close_socket(entry)
         if self._owns_http_client:
             self._http_client.close()
 
@@ -142,9 +155,49 @@ class CodexClient:
         json: JsonObject | None = None,
         timeout: float | None = None,
         extra_headers: dict[str, str] | None = None,
+        session_id: str | None = None,
+        transport: str = "sse",
     ) -> ResponseStream:
         url = urljoin(self.base_url, path.lstrip("/"))
+        json = deepcopy(json)
         headers = self._headers(extra_headers)
+        headers = session_headers(headers, session_id)
+        if transport not in {"sse", "websocket", "auto"}:
+            raise ValueError("transport must be sse, websocket, or auto")
+        if transport != "sse":
+            parts = urlsplit(url)
+            ws_url = urlunsplit(
+                (
+                    "wss" if parts.scheme == "https" else "ws",
+                    parts.netloc,
+                    parts.path,
+                    urlencode(self._params()),
+                    "",
+                )
+            )
+
+            def fallback() -> ResponseStream:
+                return self._stream(
+                    method,
+                    path,
+                    json=json,
+                    timeout=timeout,
+                    extra_headers=extra_headers,
+                    session_id=session_id,
+                )
+
+            return ResponseStream(
+                source=WebSocketSource(
+                    self._sessions,
+                    ws_url,
+                    headers,
+                    json or {},
+                    session_id,
+                    timeout or self.timeout,
+                    transport,
+                    fallback,
+                )
+            )
 
         @contextmanager
         def opened() -> Iterator[httpx.Response]:

@@ -1,0 +1,369 @@
+{
+  "started_utc": "2026-09-12T14:56:04.274518+00:00",
+  "model_requested": "gpt-5.5",
+  "case": "synthetic quote, real model inference, local Decimal tool",
+  "session_id": "protocol-case-d808093affd3443b8ec3d200a5d2fa31",
+  "redaction": "credentials/account redacted; encrypted_content replaced by length and SHA-256; wire bytes measured before redaction; account quota and opaque routing state redacted",
+  "turns": [
+    {
+      "turn": 1,
+      "transport": "websocket",
+      "response_id": "resp_0861e76844c4855e016aa5680981dc87d0bada30cb61ae3463",
+      "model_returned": "gpt-5.5",
+      "status": "completed",
+      "output_text": "",
+      "usage": {
+        "input_tokens": 233,
+        "output_tokens": 32,
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 0,
+        "total_tokens": 265,
+        "raw": {
+          "attribution": {
+            "items": {
+              "msg_0861e76844c4855e016aa56809930087d0b95ec545443e0d7d": {
+                "cache_write_tokens": 0,
+                "cached_tokens": 0,
+                "content": [
+                  {
+                    "cache_write_tokens": 0,
+                    "cached_tokens": 0,
+                    "input_tokens": 37,
+                    "output_tokens": 0
+                  }
+                ],
+                "input_tokens": 37,
+                "output_tokens": 0
+              },
+              "fc_0861e76844c4855e016aa5680aeb9487d09c02ec403abfc007": {
+                "cache_write_tokens": 0,
+                "cached_tokens": 0,
+                "input_tokens": 2,
+                "output_tokens": 32
+              }
+            },
+            "request_fields": {
+              "tools": {
+                "cache_write_tokens": 0,
+                "cached_tokens": 0,
+                "input_tokens": 134,
+                "output_tokens": 0
+              },
+              "instructions": {
+                "cache_write_tokens": 0,
+                "cached_tokens": 0,
+                "input_tokens": 60,
+                "output_tokens": 0
+              }
+            }
+          },
+          "input_tokens": 233,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 32,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 265
+        }
+      },
+      "duration_ms": 4242.359,
+      "first_event_ms": 1863.909,
+      "events": {
+        "codex.rate_limits": 1,
+        "codex.response.metadata": 1,
+        "response.created": 1,
+        "response.in_progress": 1,
+        "response.output_item.added": 1,
+        "response.function_call_arguments.delta": 19,
+        "response.function_call_arguments.done": 1,
+        "response.output_item.done": 1,
+        "responsesapi.websocket_timing": 1,
+        "response.completed": 1
+      }
+    },
+    {
+      "turn": 2,
+      "transport": "websocket",
+      "response_id": "resp_0861e76844c4855e016aa5680c8d8087d0a35f5ad4de996a28",
+      "model_returned": "gpt-5.5",
+      "status": "completed",
+      "output_text": "演示报价结果如下：\n\n- 小计：259.00 元\n- 折扣金额：25.90 元\n- 折后总额：233.10 元\n\n以上为演示数据，非真实购买价格。",
+      "usage": {
+        "input_tokens": 314,
+        "output_tokens": 53,
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 0,
+        "total_tokens": 367,
+        "raw": {
+          "attribution": {
+            "items": {
+              "msg_0861e76844c4855e016aa56809930087d0b95ec545443e0d7d": {
+                "cache_write_tokens": 0,
+                "cached_tokens": 0,
+                "content": [
+                  {
+                    "cache_write_tokens": 0,
+                    "cached_tokens": 0,
+                    "input_tokens": 37,
+                    "output_tokens": 0
+                  }
+                ],
+                "input_tokens": 37,
+                "output_tokens": 0
+              },
+              "fc_0861e76844c4855e016aa5680aeb9487d09c02ec403abfc007": {
+                "cache_write_tokens": 0,
+                "cached_tokens": 0,
+                "input_tokens": 34,
+                "output_tokens": 0
+              },
+              "fc_0861e76844c4855e016aa5680cafac87d094a33a2340ec6d98": {
+                "cache_write_tokens": 0,
+                "cached_tokens": 0,
+                "content": [
+                  {
+                    "cache_write_tokens": 0,
+                    "cached_tokens": 0,
+                    "input_tokens": 47,
+                    "output_tokens": 0
+                  }
+                ],
+                "input_tokens": 47,
+                "output_tokens": 0
+              },
+              "msg_0861e76844c4855e016aa5680da65c87d0bc12eb2bb162939a": {
+                "cache_write_tokens": 0,
+                "cached_tokens": 0,
+                "content": [
+                  {
+                    "cache_write_tokens": 0,
+                    "cached_tokens": 0,
+                    "input_tokens": 2,
+                    "output_tokens": 53
+                  }
+                ],
+                "input_tokens": 2,
+                "output_tokens": 53
+              }
+            },
+            "request_fields": {
+              "tools": {
+                "cache_write_tokens": 0,
+                "cached_tokens": 0,
+                "input_tokens": 134,
+                "output_tokens": 0
+              },
+              "instructions": {
+                "cache_write_tokens": 0,
+                "cached_tokens": 0,
+                "input_tokens": 60,
+                "output_tokens": 0
+              }
+            }
+          },
+          "input_tokens": 314,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 53,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 367
+        }
+      },
+      "duration_ms": 4430.602,
+      "first_event_ms": 647.374,
+      "events": {
+        "codex.rate_limits": 1,
+        "codex.response.metadata": 1,
+        "response.created": 1,
+        "response.in_progress": 1,
+        "response.output_item.added": 1,
+        "response.content_part.added": 1,
+        "response.output_text.delta": 47,
+        "response.output_text.done": 1,
+        "response.content_part.done": 1,
+        "response.output_item.done": 1,
+        "responsesapi.websocket_timing": 1,
+        "response.completed": 1
+      }
+    },
+    {
+      "turn": 3,
+      "transport": "sse",
+      "response_id": "resp_0861e76844c4855e016aa56811c22887d0a33cb34af47db569",
+      "model_returned": "gpt-5.5",
+      "status": "completed",
+      "output_text": "233.10 元",
+      "usage": {
+        "input_tokens": 389,
+        "output_tokens": 8,
+        "cached_tokens": 0,
+        "cache_write_tokens": 0,
+        "reasoning_tokens": 0,
+        "total_tokens": 397,
+        "raw": {
+          "attribution": {
+            "items": {
+              "msg_0861e76844c4855e016aa56811cd3887d0a4f786c9b6680589": {
+                "cache_write_tokens": 0,
+                "cached_tokens": 0,
+                "content": [
+                  {
+                    "cache_write_tokens": 0,
+                    "cached_tokens": 0,
+                    "input_tokens": 37,
+                    "output_tokens": 0
+                  }
+                ],
+                "input_tokens": 37,
+                "output_tokens": 0
+              },
+              "fc_0861e76844c4855e016aa5680aeb9487d09c02ec403abfc007": {
+                "cache_write_tokens": 0,
+                "cached_tokens": 0,
+                "input_tokens": 34,
+                "output_tokens": 0
+              },
+              "fc_0861e76844c4855e016aa56811cd8887d0aee1ca4524f8e9f5": {
+                "cache_write_tokens": 0,
+                "cached_tokens": 0,
+                "content": [
+                  {
+                    "cache_write_tokens": 0,
+                    "cached_tokens": 0,
+                    "input_tokens": 47,
+                    "output_tokens": 0
+                  }
+                ],
+                "input_tokens": 47,
+                "output_tokens": 0
+              },
+              "msg_0861e76844c4855e016aa5680da65c87d0bc12eb2bb162939a": {
+                "cache_write_tokens": 0,
+                "cached_tokens": 0,
+                "content": [
+                  {
+                    "cache_write_tokens": 0,
+                    "cached_tokens": 0,
+                    "input_tokens": 55,
+                    "output_tokens": 0
+                  }
+                ],
+                "input_tokens": 55,
+                "output_tokens": 0
+              },
+              "msg_0861e76844c4855e016aa56811cdbc87d09b727fc99f64e881": {
+                "cache_write_tokens": 0,
+                "cached_tokens": 0,
+                "content": [
+                  {
+                    "cache_write_tokens": 0,
+                    "cached_tokens": 0,
+                    "input_tokens": 20,
+                    "output_tokens": 0
+                  }
+                ],
+                "input_tokens": 20,
+                "output_tokens": 0
+              },
+              "msg_0861e76844c4855e016aa56812a56087d09680420f49c57864": {
+                "cache_write_tokens": 0,
+                "cached_tokens": 0,
+                "content": [
+                  {
+                    "cache_write_tokens": 0,
+                    "cached_tokens": 0,
+                    "input_tokens": 2,
+                    "output_tokens": 8
+                  }
+                ],
+                "input_tokens": 2,
+                "output_tokens": 8
+              }
+            },
+            "request_fields": {
+              "tools": {
+                "cache_write_tokens": 0,
+                "cached_tokens": 0,
+                "input_tokens": 134,
+                "output_tokens": 0
+              },
+              "instructions": {
+                "cache_write_tokens": 0,
+                "cached_tokens": 0,
+                "input_tokens": 60,
+                "output_tokens": 0
+              }
+            }
+          },
+          "input_tokens": 389,
+          "input_tokens_details": {
+            "cache_write_tokens": 0,
+            "cached_tokens": 0
+          },
+          "output_tokens": 8,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 397
+        }
+      },
+      "duration_ms": 2562.535,
+      "first_event_ms": 1938.511,
+      "events": {
+        "response.created": 1,
+        "response.in_progress": 1,
+        "response.output_item.added": 1,
+        "response.content_part.added": 1,
+        "response.output_text.delta": 4,
+        "response.output_text.done": 1,
+        "response.content_part.done": 1,
+        "response.output_item.done": 1,
+        "response.completed": 1
+      }
+    }
+  ],
+  "status": "completed",
+  "capture_layers": [
+    "SDK complete request",
+    "WebSocket JSON application frames before TLS",
+    "HTTPX request bytes and consumed SSE response bytes"
+  ],
+  "not_captured": [
+    "TCP/TLS packets and WebSocket framing overhead",
+    "unconsumed SSE trailing bytes",
+    "library-generated WebSocket request headers"
+  ],
+  "source_files_sha256": {
+    "__init__.py": "80c32e905f8998451351b5ce8bf8731ac7df83731c0ad1fe83044db4dab2d68b",
+    "_async_auth.py": "4e198bd36f0684be655e5ad821e9e12f2a784e583253a6a22e1276166bf5ec71",
+    "_async_client.py": "77a39bfc31d2c44256f1652c89f39a136c90b381928c7e401599ba67366e28b3",
+    "_async_models.py": "b83e630c1747338f69e5f49903bb5e0fbd87d009e85cdb03b59bf63575f2662d",
+    "_async_responses.py": "be30c771aa80c9a84a1b912b960f327f4bb0b22eb43ea583e4ebec60dfbffab5",
+    "_async_stream.py": "6e393f25c86b612e0621a804a29d1d2eb78679ec5e2c975550964c8045cf55a6",
+    "_auth.py": "3daa289cf77fb57689cddbb7fc9944bbf35b52255eae2145127d464fabb5de70",
+    "_cache.py": "77c78b5eb815e10d0822a668b9cdc1d016dd4faa6d690088470b70fe7ef961e4",
+    "_chat.py": "c5976b938fb94f935657e00e2f583d6e7cb8ba54ab0c8f85f5ac7deb603f4a91",
+    "_chat_projection.py": "f8c0a9460bcdb6910334918090b4e0369895b78618fd5a9a0a8d83beac06a788",
+    "_client.py": "747209cdc917ba82178aa23551760537dc57245e0a0ea5d1d77a38817b93138c",
+    "_config.py": "2552d5b679860104ec7297ba0cd6d993eb590e64607434b6af6112a0b2084801",
+    "_converters.py": "2d2ee3096365e8f87ede6497f535134df121ef7215e12280223f4a78f339daaa",
+    "_errors.py": "c154b019cdcad4ecbff6a4e34dd1022c81082906537c812753a035387505bb92",
+    "_models.py": "a9247f9089671edbd197d8a38dfa3c24e3bb08c681607a200a1054a8b6fe23df",
+    "_response_state.py": "5af2cd4bd062aa516ea00f5fa61809c4f1f26d060528521b89d97aead74c0370",
+    "_responses.py": "9de7e4459da0b53425b394cc1a890df895f7c85408d1fab4c5fa7be84b6388de",
+    "_session_pool.py": "07f867d0556531e7d770173d4404947678897ecd30cb70361fe6090a8cdc0236",
+    "_stream.py": "9b868d786274b2334ca583c7a02886823c7da320e4aaac54e985d5ce903235a4",
+    "_types.py": "86c1859dcc1fb33dbe7bb2f8d2c9f3d520ba5ca91e49d9eb25712dd247be5814",
+    "_websocket.py": "45f336efe3e161a0b9924b0b0c9ae18a643e7025b803bafa71fe7baba61db63a"
+  },
+  "trace_sha256": "f427bc6f75222cc20bf21c1d205043fb6ba4dd411bd0a22100414b3b5cb2d0b8"
+}

@@ -28,9 +28,10 @@ from ._types import (
     Response,
     ResponseStreamEvent,
     TextConfig,
+    Usage,
 )
 
-__version__ = "0.2.0"
+__version__ = "1.0.0"
 
 __all__ = [
     "APIConnectionError",
@@ -57,6 +58,7 @@ __all__ = [
     "StreamError",
     "TextConfig",
     "Token",
+    "Usage",
     "__version__",
     "afinish_login",
     "aget_token",

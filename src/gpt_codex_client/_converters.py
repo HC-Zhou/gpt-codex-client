@@ -4,6 +4,7 @@ import json
 from copy import deepcopy
 from typing import Any
 
+from ._cache import cache_key
 from ._types import ChatCompletion, FunctionTool, JsonObject, Reasoning, Response, TextConfig
 
 DEFAULT_INSTRUCTIONS = "You are Codex, a concise coding assistant."
@@ -19,10 +20,13 @@ def response_request_body(
     tool_choice: str | JsonObject | None = None,
     parallel_tool_calls: bool | None = None,
     reasoning: Reasoning | JsonObject | None = None,
+    model_reasoning_effort: str | None = None,
     text: TextConfig | JsonObject | None = None,
     include: list[str] | None = None,
     previous_response_id: str | None = None,
     preserve_context: bool = False,
+    session_id: str | None = None,
+    prompt_cache_key: str | None = None,
 ) -> JsonObject:
     body: JsonObject = {
         "model": model,
@@ -38,6 +42,7 @@ def response_request_body(
         "parallel_tool_calls": parallel_tool_calls,
         "include": include,
         "previous_response_id": previous_response_id,
+        "prompt_cache_key": cache_key(session_id, prompt_cache_key),
     }
     for key, value in optional.items():
         if value is not None:
@@ -46,8 +51,17 @@ def response_request_body(
         body["tools"] = [
             tool.to_dict() if isinstance(tool, FunctionTool) else tool for tool in tools
         ]
-    if reasoning is not None:
-        body["reasoning"] = reasoning.to_dict() if isinstance(reasoning, Reasoning) else reasoning
+    if reasoning is not None or model_reasoning_effort is not None:
+        config = deepcopy(
+            reasoning.to_dict() if isinstance(reasoning, Reasoning) else reasoning or {}
+        )
+        if model_reasoning_effort is not None:
+            if not isinstance(model_reasoning_effort, str) or not model_reasoning_effort.strip():
+                raise ValueError("model_reasoning_effort must be a non-empty string")
+            if config.get("effort") is not None and config["effort"] != model_reasoning_effort:
+                raise ValueError("model_reasoning_effort conflicts with reasoning.effort")
+            config["effort"] = model_reasoning_effort
+        body["reasoning"] = config
     if text is not None:
         body["text"] = text.to_dict() if isinstance(text, TextConfig) else text
     return body

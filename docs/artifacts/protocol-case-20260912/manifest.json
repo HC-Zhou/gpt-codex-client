@@ -1,0 +1,15 @@
+{
+  "started_utc": "2026-09-12T14:55:38.032961+00:00",
+  "model_requested": "gpt-5.5",
+  "case": "synthetic quote, real model inference, local Decimal tool",
+  "session_id": "protocol-case-b99e17169a314de893d86114d86d0d33",
+  "redaction": "credentials/account redacted; encrypted_content replaced by length and SHA-256; wire bytes measured before redaction",
+  "turns": [],
+  "status": "failed",
+  "error": {
+    "type": "MultipleValuesError",
+    "message": "'set-cookie'",
+    "code": null,
+    "status_code": null
+  }
+}

@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/assets/gpt-codex-client-icon.svg" width="132" alt="gpt-codex-client 图标">
+  <img src="https://raw.githubusercontent.com/HC-Zhou/gpt-codex-client/main/docs/assets/gpt-codex-client-v1.png" width="132" alt="gpt-codex-client 图标">
 </p>
 
 <h1 align="center">gpt-codex-client</h1>
@@ -172,3 +172,42 @@ uv run pytest -q
 支持参数增量与准确的结束原因。可选 preserve_context 保留同模型回放所需的不透明上下文。
 迁移细节见[流式接口](docs/streaming.md)、[Chat 兼容](docs/chat-compatibility.md)和
 [原生回放](docs/responses.md)。验证使用离线 MockTransport，没有调用真实 OAuth/Codex 端点。
+
+## 会话缓存与 usage
+
+Responses、Chat 的同步/异步调用支持 `session_id`、`prompt_cache_key` 和
+`transport="sse" | "websocket" | "auto"`。默认仍为 SSE；使用 WebSocket 前安装
+`pip install 'gpt-codex-client[websocket]'`。每次传完整历史，并保持稳定 session_id，
+由 SDK 自动判断是否发送增量。
+
+usage 存在时可直接读取 `response.usage.input_tokens`、`cached_tokens`、
+`cache_write_tokens`、`output_tokens`、`reasoning_tokens`、`total_tokens`。
+缺失值为 None，输入总量不扣减缓存 token。
+
+客户端内部维护有上限的连接缓存，不新增公开 Session 对象。使用
+`close_session(id)` / `await aclose_session(id)` 或关闭客户端清理自有 WebSocket。
+详见[Responses 文档](docs/responses.zh.md#缓存标识与可选-websocket)，包括并发、恢复、
+过期、可选依赖与代理限制。当前不处理账户隔离，不保证缓存命中或费用收益。自动化回归使用离线模拟，下方协议文档另行记录了一次同步 WebSocket/SSE 真实案例。
+
+真实请求、工具回传、增量续接与 usage 数据分析见[完整协议文档](docs/protocol.zh.md)。
+
+## GPT 推理强度
+
+```python
+response = client.responses.create(
+    model="gpt-5.5",
+    input="分析这个设计的取舍。",
+    model_reasoning_effort="high",
+)
+```
+
+`model_reasoning_effort` 映射为线上 `reasoning.effort`，不会作为顶层协议字段发送。
+同步/异步 Responses 的 `create`、`parse`、流式调用及 `chat.completions.create` 均支持。
+已有 `reasoning={"effort": "high", "summary": "auto"}` 和 Chat 的
+`reasoning_effort="high"` 保持兼容。同值重复指定可用，冲突值会在联网前抛出
+`ValueError`；其他 reasoning 选项保留，不修改调用方输入。
+
+省略时使用后端默认值。SDK 透传非空字符串，不按模型名称过滤，也不硬编码模型能力表；
+具体支持的档位由模型和后端决定。[Codex 官方配置文档](https://developers.openai.com/codex/config-reference/)
+列出 `minimal`、`low`、`medium`、`high` 和依模型而定的 `xhigh`。
+SDK 不会自动读取本地 Codex TOML 中的 `model_reasoning_effort`。

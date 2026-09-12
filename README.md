@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/assets/gpt-codex-client-icon.svg" width="132" alt="gpt-codex-client icon">
+  <img src="https://raw.githubusercontent.com/HC-Zhou/gpt-codex-client/main/docs/assets/gpt-codex-client-v1.png" width="132" alt="gpt-codex-client icon">
 </p>
 
 <h1 align="center">gpt-codex-client</h1>
@@ -176,3 +176,45 @@ deltas and accurate finish reasons. Optional preserve_context retains opaque
 Codex context for same-model replay. See [streaming](docs/streaming.md),
 [Chat migration](docs/chat-compatibility.md), and [native replay](docs/responses.md).
 Validation uses offline MockTransport fixtures, not live OAuth/Codex calls.
+
+## Session caching and usage
+
+Responses and Chat calls (sync/async) accept `session_id`, `prompt_cache_key`, and
+`transport="sse" | "websocket" | "auto"`. SSE remains the default; WebSocket is
+optional via `pip install 'gpt-codex-client[websocket]'`. Supply full history and
+keep a stable session ID to enable transparent incremental requests.
+
+Read `response.usage.input_tokens`, `.cached_tokens`, `.cache_write_tokens`,
+`.output_tokens`, `.reasoning_tokens`, and `.total_tokens` when usage is present.
+Missing counters remain `None`; input totals include cached tokens.
+
+The client owns its bounded internal connection cache, without a public Session
+object. Use `close_session(id)` / `await aclose_session(id)` or close the client
+to release its WebSockets. See [Responses documentation](docs/responses.md#cache-identity-and-optional-websocket-transport)
+for lifecycle, concurrency, recovery, optional-dependency and proxy details.
+Cache hits and cost savings are not guaranteed. Automated regression tests use offline mocks; the protocol document below separately records a real synchronous WebSocket/SSE case.
+
+See the [live protocol capture](docs/protocol.md) for actual requests, responses, tool results and usage.
+
+## GPT reasoning effort
+
+```python
+response = client.responses.create(
+    model="gpt-5.5",
+    input="Explain the trade-offs in this design.",
+    model_reasoning_effort="high",
+)
+```
+
+`model_reasoning_effort` maps to the wire field `reasoning.effort`; it is not
+sent as a top-level protocol field. It works with sync/async Responses `create`,
+`parse`, streaming, and `chat.completions.create`. Existing `reasoning={"effort":
+"high", "summary": "auto"}` and Chat `reasoning_effort="high"` remain supported.
+Matching duplicate values are accepted; conflicting values raise `ValueError`
+before network I/O. Other reasoning options are preserved without mutating inputs.
+
+Omitting the option keeps the backend default. Non-empty strings are passed
+through without model-name filtering or a hard-coded capability list; supported
+levels depend on the model and backend. The [Codex configuration reference](https://developers.openai.com/codex/config-reference/)
+documents `minimal`, `low`, `medium`, `high`, and model-dependent `xhigh`.
+This SDK does not read `model_reasoning_effort` from local Codex TOML automatically.
