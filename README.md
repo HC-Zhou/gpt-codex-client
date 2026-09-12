@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/assets/gpt-codex-client-v1.png" width="132" alt="gpt-codex-client icon">
+  <img src="https://raw.githubusercontent.com/HC-Zhou/gpt-codex-client/main/docs/assets/gpt-codex-client-v1.png" width="132" alt="gpt-codex-client icon">
 </p>
 
 <h1 align="center">gpt-codex-client</h1>
